@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/short-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="question-container">
+  <h1>Question Detail</h1>
+
+  <div class="prompt">
+    <h3>Prompt:</h3>
+    <p>{{ question.prompt }}</p>
+  </div>
+
+  {% if question.question_type == "short" %}
+    <div class="answer">
+      <h4>Correct Answer:</h4>
+      <p>{{ question.correct_answer }}</p>
+    </div>
+  {% elif question.question_type == "short" %}
+    <div class="sample-answer">
+      <h4>Sample Answer:</h4>
+      <p>{{ question.sample_answer }}</p>
+    </div>
+  {% elif question.question_type == "mcq" %}
+    <div class="options">
+      <h4>Options:</h4>
+      <ul>
+        <li>A. {{ question.option_a }}</li>
+        <li>B. {{ question.option_b }}</li>
+        <li>C. {{ question.option_c }}</li>
+        <li>D. {{ question.option_d }}</li>
+      </ul>
+      <p><strong>Correct Answer:</strong> {{ question.correct_answer }}</p>
+    </div>
+  {% endif %}
+  {% if question.question_type == "mcq" %}
+    <div class="answer">
+      <h4>Correct Answer:</h4>
+      <p>{{ question.correct_answer }}</p>
+    </div>
+  {% elif question.question_type == "long" %}
+    <div class="sample-answer">
+      <h4>Sample Answer:</h4>
+      <p>{{ question.sample_answer }}</p>
+    </div>
+  {% elif question.question_type == "mcq" %}
+    <div class="options">
+      <h4>Options:</h4>
+      <ul>
+        <li>A. {{ question.option_a }}</li>
+        <li>B. {{ question.option_b }}</li>
+        <li>C. {{ question.option_c }}</li>
+        <li>D. {{ question.option_d }}</li>
+      </ul>
+      <p><strong>Correct Answer:</strong> {{ question.correct_answer }}</p>
+    </div>
+  {% endif %}
+
+  <div class="actions">
+    <a href="{% url 'question-index' %}" class="btn">← Back to Questions</a>
+    <a href="{% url 'question-update' question.id %}" class="btn warn">Edit</a>
+    <a href="{% url 'question-delete' question.id %}" class="btn danger">Delete</a>
+  </div>
+</section>
+{% endblock %}

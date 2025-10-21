@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/mcq-index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="mcq-answer">
+  <h1>Multiple Choice Questions</h1>
+  {% for mcq in mcqs %}
+  <div class="question-card">
+    <a href="{% url 'mcq-detail' mcq.id %}">
+      <div class="question-content">
+        <h3>{{ mcq.prompt}}</h3>
+      </div>
+    </a>
+  </div>
+  {% empty %}
+  <p>No multiple-choice questions available yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}

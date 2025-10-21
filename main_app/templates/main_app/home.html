@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Home | MTEL ESL Prep{% endblock %}
+
+{% block content %}
+    <h2>Welcome!</h2>
+    <p>See question types.</p>
+    <ul>
+        <li><a href="{% url 'mcq-index' %}">Multiple Choice Questions</a></li>
+        <li><a href="{% url 'long-index' %}">Long Answer Questions</a></li>
+        <li><a href="{% url 'short-index' %}">Short Answer Questions</a></li>
+    </ul>
+{% endblock %}

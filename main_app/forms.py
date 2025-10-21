@@ -1,0 +1,35 @@
+from django import forms
+from .models import ShortAnswerQuestion, LongAnswerQuestion, MultipleChoiceQuestion
+
+
+
+class ShortAnswerQuestionForm(forms.ModelForm):
+    class Meta:
+        model = ShortAnswerQuestion
+        fields = ['prompt', 'answer']
+        widgets = {
+            'prompt': forms.Textarea(attrs={'rows': 3}),
+            'answer': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class LongAnswerQuestionForm(forms.ModelForm):
+    class Meta:
+        model = LongAnswerQuestion
+        fields = ['prompt', 'answer']
+        widgets = {
+            'prompt': forms.Textarea(attrs={'rows': 3}),
+            'answer': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class MultipleChoiceQuestionForm(forms.ModelForm):
+    class Meta:
+        model = MultipleChoiceQuestion
+        fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+        widgets = {
+            'prompt': forms.Textarea(attrs={'rows': 3}),
+            'option_a': forms.TextInput(),
+            'option_b': forms.TextInput(),
+            'option_c': forms.TextInput(),
+            'option_d': forms.TextInput(),
+            'correct_answer': forms.Select(),
+        }

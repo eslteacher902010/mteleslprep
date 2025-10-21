@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/long-index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="long-answer">
+  <h1>Long Answer Questions</h1>
+
+  {% for long in longs %}
+  <div class="question-card">
+    <a href="{% url 'long-detail' long.id %}">
+      <div class="question-content">
+        <h3>{{ long.prompt}}</h3>
+      </div>
+    </a>
+  </div>
+  {% empty %}
+  <p>No long-answer questions available yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}
