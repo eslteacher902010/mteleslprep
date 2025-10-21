@@ -6,7 +6,7 @@ from .models import ShortAnswerQuestion, LongAnswerQuestion, MultipleChoiceQuest
 class ShortAnswerQuestionForm(forms.ModelForm):
     class Meta:
         model = ShortAnswerQuestion
-        fields = ['prompt', 'answer']
+        fields = ['prompt', 'correct_answer']
         widgets = {
             'prompt': forms.Textarea(attrs={'rows': 3}),
             'answer': forms.Textarea(attrs={'rows': 3}),
@@ -15,7 +15,7 @@ class ShortAnswerQuestionForm(forms.ModelForm):
 class LongAnswerQuestionForm(forms.ModelForm):
     class Meta:
         model = LongAnswerQuestion
-        fields = ['prompt', 'answer']
+        fields = ['prompt', 'sample_answer']
         widgets = {
             'prompt': forms.Textarea(attrs={'rows': 3}),
             'answer': forms.Textarea(attrs={'rows': 3}),

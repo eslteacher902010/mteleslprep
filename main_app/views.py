@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from django.views.generic.edit import CreateView
 
-from django.views.generic import ListView, DetailView #generic class views
+from django.views.generic import ListView, DetailView , UpdateView, DeleteView
 
 from django.contrib.auth.views import LoginView
 
@@ -85,6 +85,7 @@ def question_index(request):
 
     return render(request, 'main_app/index.html', context)
 
+#short answer 
 class ShortQuestionList(ListView):
     model = ShortAnswerQuestion
     template_name = 'main_app/short/short_list.html'
@@ -94,6 +95,29 @@ class ShortQuestionDetail(DetailView):
     model = ShortAnswerQuestion
     template_name = 'main_app/short/short_detail.html'
     context_object_name = 'question'
+
+class ShortQuestionDelete(DeleteView):
+    model = ShortAnswerQuestion
+    success_url = '/short-questions/'
+
+class ShortAnswerQuestionCreate(LoginRequiredMixin, CreateView):
+    model = ShortAnswerQuestion
+    fields = ['prompt', 'correct_answer'] 
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user  #assign the logged-in user as the owner
+        return super().form_valid(form)
+
+class ShortAnswerQuestionUpdate(LoginRequiredMixin,UpdateView):
+    model = ShortAnswerQuestion
+    fields = ['prompt', 'correct_answer'] 
+
+class ShortAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
+    model = ShortAnswerQuestion
+    success_url = '/short-questions/'
+
+
+#long answer
 
 class LongQuestionList(ListView):
     model = LongAnswerQuestion
@@ -105,6 +129,24 @@ class LongQuestionDetail(DetailView):
     template_name = 'main_app/long/long_detail.html'
     context_object_name = 'question'
 
+class LongAnswerQuestionCreate(LoginRequiredMixin, CreateView):
+    model = LongAnswerQuestion
+    fields = ['prompt', 'sample_answer']
+
+    def form_valid(self, form): 
+        form.instance.user = self.request.user 
+        return super().form_valid(form)
+
+class LongAnswerQuestionUpdate(LoginRequiredMixin, UpdateView):
+    model = LongAnswerQuestion
+    fields = ['prompt', 'sample_answer']
+
+class LongAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
+    model = LongAnswerQuestion
+    success_url = '/long-questions/'
+
+
+#multiple choice
 
 class MCQList(ListView):
     model = MultipleChoiceQuestion
@@ -116,35 +158,54 @@ class MCQDetail(DetailView):
     template_name = 'main_app/mcq/mcq_detail.html'
     context_object_name = 'question'
 
-class QuestionCreate(CreateView):
-    model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
+class MultipleChoiceQuestionCreate(LoginRequiredMixin, CreateView):
+    model = MultipleChoiceQuestion
     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
-    template_name = 'main_app/question_form.html'
-    success_url = '/questions/'
 
-class QuestionUpdate(UpdateView):
-    model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
+    def form_valid(self, form): 
+        form.instance.user = self.request.user 
+        return super().form_valid(form)
+
+class MultipleChoiceQuestionUpdate(LoginRequiredMixin, UpdateView):
+    model = MultipleChoiceQuestion
     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
-    template_name = 'main_app/question_form.html'
-    success_url = '/questions/'
 
-class QuestionDelete(DeleteView):
-    model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
-    success_url = '/questions/'
-    success_url = '/cards/'
+class MultipleChoiceQuestionDelete(LoginRequiredMixin, DeleteView):
+    model = MultipleChoiceQuestion
+    success_url = '/mcq-questions/'
 
 
-class MultipleChoiceQuestionForm(forms.ModelForm):
-    class Meta:
-        model = MultipleChoiceQuestion
-        fields = '__all__'
 
-class ShortAnswerQuestionForm(forms.ModelForm):
-    class Meta:
-        model = ShortAnswerQuestion
-        fields = '__all__'
 
-class LongAnswerQuestionForm(forms.ModelForm):
-    class Meta:
-        model = LongAnswerQuestion
-        fields = '__all__'
+# class QuestionCreate(CreateView):
+#     model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
+#     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+#     template_name = 'main_app/question_form.html'
+#     success_url = '/questions/'
+
+# class QuestionUpdate(UpdateView):
+#     model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
+#     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+#     template_name = 'main_app/question_form.html'
+#     success_url = '/questions/'
+
+# class QuestionDelete(DeleteView):
+#     model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion
+#     success_url = '/questions/'
+#     success_url = '/cards/'
+
+
+# class MultipleChoiceQuestionForm(forms.ModelForm):
+#     class Meta:
+#         model = MultipleChoiceQuestion
+#         fields = '__all__'
+
+# class ShortAnswerQuestionForm(forms.ModelForm):
+#     class Meta:
+#         model = ShortAnswerQuestion
+#         fields = '__all__'
+
+# class LongAnswerQuestionForm(forms.ModelForm):
+#     class Meta:
+#         model = LongAnswerQuestion
+#         fields = '__all__'

@@ -10,10 +10,10 @@
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}
-    <h1>Add a Short Answer Question</h1>
-    <p> Remember to provide a clear and concise answer.</p>
+    <h1>Add a multiple-choice Question</h1>
+    <p> Remember to pick a correct answer.</p>
   {% endif %}
-  <img src="{% static 'images/Sun.png' %}" alt="A sun" />
+  <img src="{% static 'images/sun_behind_cloud.png' %}" alt="A sun behind a cloud" />
 </div>
 
 <form action="" method="post" class="form-container">
@@ -23,4 +23,4 @@
   </table>
   <button type="submit" class="btn submit">Submit!</button>
 </form>
-{% endblock %}
+{% endblock %} 

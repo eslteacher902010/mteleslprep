@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
+
 
 #add a helper for all data of all questions 
 # Short Answer Question
@@ -7,9 +9,15 @@ class ShortAnswerQuestion(models.Model):
     prompt = models.TextField()
     question_type= "short"
     correct_answer = models.CharField(max_length=200)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+
 
     def __str__(self):
         return f"Short: {self.prompt[:50]}"
+    
+    def get_absolute_url(self):
+        return reverse('short-detail', kwargs={'short_id': self.id})
 
 
 # Long Answer Question
@@ -17,6 +25,7 @@ class LongAnswerQuestion(models.Model):
     prompt = models.TextField()
     question_type= "long"
     sample_answer = models.TextField(blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"Long: {self.prompt[:50]}"
@@ -30,6 +39,7 @@ class MultipleChoiceQuestion(models.Model):
     option_b = models.CharField(max_length=255)
     option_c = models.CharField(max_length=255)
     option_d = models.CharField(max_length=255)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     correct_answer = models.CharField(max_length=1, choices=[
         ('A', 'A'),
         ('B', 'B'),
