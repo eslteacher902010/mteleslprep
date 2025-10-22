@@ -18,7 +18,7 @@
   <h1>{{ question.prompt }}</h1>
   <p><strong>Answer:</strong> {{ question.correct_answer }}</p>
 
-  <div class="btn-row">
+  <div class="btn-row font-mono text-lg font-semibold">
     <a href="{% url 'short-update' question.id %}" class="btn warn">Edit</a>
     <a href="{% url 'short-delete' question.id %}" class="btn danger">Delete</a>
     <a href="{% url 'short-index' %}" class="btn">Back to Questions</a>

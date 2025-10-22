@@ -6,12 +6,12 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header">
+<div class="page-header font-mono text-lg font-semibold">
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}
     <h1>Add a Short Answer Question</h1>
-    <p> Remember to provide a clear and concise answer.</p>
+    <p class="font-mono text-lg font-semibold"> Remember to provide a clear and concise answer.</p>
   {% endif %}
   <img src="{% static 'images/Sun.png' %}" alt="A sun" />
 </div>

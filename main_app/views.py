@@ -1,4 +1,4 @@
-from decimal import Decimal
+from urllib import request
 from django.shortcuts import redirect, render, get_object_or_404
 
 
@@ -30,20 +30,24 @@ from .models import (
     UserResponse,
 )
 
+def home(request):
+    return render(request, 'main_app/home.html')
 
-class Home(LoginView):
-    template_name = 'main_app/home.html'
 
+# class CustomLoginView(LoginView):
+#     template_name = 'login.html'
+#     redirect_authenticated_user = True
 
 def practice(request):
     return render(request, 'main_app/practice.html')
 
 
-
 def about(request):
     return render(request, 'main_app/about.html')
 
-
+@login_required
+def add_question(request):
+    return render(request, 'main_app/addq.html')
 
 
 
@@ -86,7 +90,7 @@ def question_index(request):
         'mcq_questions': mcq_questions,
     }
 
-    return render(request, 'main_app/index.html', context)
+    return render(request, 'main_app/questions/index.html', context)
 
 #short answer 
 class ShortQuestionList(ListView):

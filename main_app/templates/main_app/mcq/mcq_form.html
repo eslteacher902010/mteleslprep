@@ -6,12 +6,12 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header">
+<div class="page-header font-mono text-lg font-semibold">
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}
     <h1>Add a multiple-choice Question</h1>
-    <p> Remember to pick a correct answer.</p>
+    <p class="font-mono text-lg font-semibold"> Remember to pick a correct answer.</p>
   {% endif %}
   <img src="{% static 'images/sun_behind_cloud.png' %}" alt="A sun behind a cloud" />
 </div>

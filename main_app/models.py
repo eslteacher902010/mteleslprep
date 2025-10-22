@@ -8,7 +8,7 @@ from django.urls import reverse
 class ShortAnswerQuestion(models.Model):
     prompt = models.TextField()
     question_type= "short"
-    correct_answer = models.CharField(max_length=200)
+    correct_answer = models.TextField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 
@@ -28,6 +28,10 @@ class LongAnswerQuestion(models.Model):
 
     def __str__(self):
         return f"Long: {self.prompt[:50]}"
+    
+    def get_absolute_url(self):
+        return reverse('long-detail', kwargs={'pk': self.id})
+
 
 
 # Multiple Choice Question
@@ -44,10 +48,13 @@ class MultipleChoiceQuestion(models.Model):
         ('B', 'B'),
         ('C', 'C'),
         ('D', 'D'),
-    ])
+    ]) 
 
     def __str__(self):
         return f"MCQ: {self.prompt[:50]}"
+    
+    def get_absolute_url(self):
+        return reverse('mcq-detail', kwargs={'pk': self.id})
 
 
 
@@ -56,6 +63,10 @@ class PracticeTest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="practice_tests")
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.FloatField(default=0)
+    short_answer_questions = models.ManyToManyField(ShortAnswerQuestion)
+    long_answer_questions = models.ManyToManyField(LongAnswerQuestion)
+    mcq_questions = models.ManyToManyField(MultipleChoiceQuestion)
+
 
     def __str__(self):
         return f"{self.user.username} - {self.date_taken.strftime('%Y-%m-%d %H:%M')}"

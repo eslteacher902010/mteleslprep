@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/short-index.css' %}">
+{% endblock %}
+
+{% block content %}
+<ul class="font-mono text-lg font-semibold">
+    <li><a href="{% url 'short-create' %}">Add Short Question</a></li>
+    <li><a href="{% url 'long-create' %}">Add Long Question</a></li>
+    <li><a href="{% url 'mcq-create' %}">Add MCQ</a></li>
+</ul>
+
+
+</section>
+{% endblock %}

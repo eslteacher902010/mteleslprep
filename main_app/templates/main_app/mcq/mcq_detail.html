@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="card
+<div class="card font-mono text-lg font-semibold text-white
   {% if question.correct_answer|length > 50 %}
     pink-card
   {% elif question.correct_answer|length > 20 %}
@@ -16,7 +16,7 @@
 ">
 
   <h1>{{ question.prompt }}</h1>
-  <p><strong>Answer:</strong> {{ question.correct_answer }}</p>
+  <p class="font-mono text-lg font-semibold"><strong>Answer:</strong> {{ question.correct_answer }}</p>
 
   <div class="btn-row">
     <a href="{% url 'mcq-update' question.id %}" class="btn warn">Edit</a>

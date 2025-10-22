@@ -1,23 +1,27 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %}Home | MTEL ESL Prep{% endblock %}
 
 {% block content %}
-    <h2>Welcome!</h2>
-    <p>See question types.</p>
-    <ul>
-        <li><a href="{% url 'mcq-index' %}">Multiple Choice Questions</a></li>
-        <li><a href="{% url 'long-index' %}">Long Answer Questions</a></li>
-        <li><a href="{% url 'short-index' %}">Short Answer Questions</a></li>
-    </ul>
-<section>
-  <form action="{% url 'home' %}" method="post" class="login">
-    <h1>Login</h1>
-    {% csrf_token %} {{ form.as_p }}
-    <input type="hidden" name="next" value="{{ next }}" />
-    <button type="submit" class="btn submit">Login</button>
-  </form>
-</section>
+
+<ul>
+  <li class="font-sans text-lg text-white">
+    <a href="{% url 'mcq-index' %}">Multiple Choice Questions</a>
+  </li>
+  <li class="font-sans text-lg text-white">
+    <a href="{% url 'long-index' %}">Long Answer Questions</a>
+  </li>
+  <li class="font-sans text-lg text-white">
+    <a href="{% url 'short-index' %}">Short Answer Questions</a>
+  </li>
+</ul>
+
+{% if user.is_authenticated %}
+  <p class="font-sans text-2xl text-white">Welcome back, {{ user.username }}!</p>
+{% else %}
+  <a class="font-sans text-white" href="{% url 'login' %}" class="btn">Login</a>
+{% endif %}
+
 
 {% endblock %}
 

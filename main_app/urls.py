@@ -3,9 +3,12 @@ from . import views
 
 urlpatterns = [
     # Home / static pages
-    path('', views.Home.as_view(), name='home'),
+    path('', views.home, name='home'),
     path('practice/', views.practice, name='practice'),
     path('about/', views.about, name='about'),
+    path('addq/', views.add_question, name='add-question'),
+    # path('login/', views.CustomLoginView.as_view(), name='login'),
+    
 
     # All questions 
     path('questions/', views.question_index, name='question-index'),
@@ -23,16 +26,17 @@ urlpatterns = [
     path('questions/long/', views.LongQuestionList.as_view(), name='long-index'),
     path('questions/long/<int:pk>/', views.LongQuestionDetail.as_view(), name='long-detail'),
     path('questions/long/create/', views.LongAnswerQuestionCreate.as_view(), name='long-create'),
-    path('questions/long/update/', views.LongAnswerQuestionUpdate.as_view(), name='long-update'),
-    path('questions/long/delete/', views.LongAnswerQuestionDelete.as_view(), name='long-delete'),
+    path('questions/long/<int:pk>/update/', views.LongAnswerQuestionUpdate.as_view(), name='long-update'),
+    path('questions/long/<int:pk>/delete/', views.LongAnswerQuestionDelete.as_view(), name='long-delete'),
 
 
     # Multiple choice  
     path('questions/mcq/', views.MCQList.as_view(), name='mcq-index'),
     path('questions/mcq/<int:pk>/', views.MCQDetail.as_view(), name='mcq-detail'),
     path('questions/mcq/create/', views.MultipleChoiceQuestionCreate.as_view(), name='mcq-create'),
-    path('questions/mcq/update/', views.MultipleChoiceQuestionUpdate.as_view(), name='mcq-update'),
-    path('questions/mcq/delete/', views.MultipleChoiceQuestionDelete.as_view(), name='mcq-delete'),
+    path('questions/mcq/<int:pk>/update/', views.MultipleChoiceQuestionUpdate.as_view(), name='mcq-update'),
+    path('questions/mcq/<int:pk>/delete/', views.MultipleChoiceQuestionDelete.as_view(), name='mcq-delete'),
+
 
     path('accounts/signup/', views.signup, name='signup'),
 

@@ -4,21 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}MTEL ESL Prep{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'main_app/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
 </head>
-<body>
-      <h1><a href="{% url 'home' %}">MTEL ESL Prep</a></h1>
+<body class="bg-gradient-to-br from-purple-500 via-pink-500 to-yellow-300 min-h-screen flex items-center justify-center">
+    <header class="p-4 bg-blue-600 text-white">
+
+      <h1 class="font-mono text-2xl">
+        <a href="{% url 'home' %}">MTEL ESL Prep</a></h1>
       <nav>
         <ul>
           {% if user.is_authenticated %}
-          <li><a href="{% url 'question-index' %}">All Questions</a></li>
-          <li><a href="{% url 'short-create' %}">Add Short Question</a></li>
-          <li><a href="{% url 'long-create' %}">Add Long Question</a></li>
-          <li><a href="{% url 'mcq-create' %}">Add MCQ</a></li>
-           <a href="/practice/">Practice</a> 
-           <li><a href="{% url 'about' %}">About</a></li>
-          
-            <li>
+          <li class="font-mono text-lg font-semibold ">
+            <a href="{% url 'question-index' %}">All Questions</a></li>
+           <li class="font-mono text-lg font-semibold">
+            <a href="/practice/">Practice</a></li>
+          <li class="font-mono text-lg font-semibold">
+            <a href="{% url 'add-question' %}">Add Question</a></li>
+           <li class="font-mono text-lg  font-semibold">
+             <a href="{% url 'about' %}">About</a></li>
+
+            <li class="font-mono text-lg  font-semibold">
             <form id="logout-form" method="post" action="{% url 'logout' %}">
               {% csrf_token %}
               <button type="submit">Log out</button>
@@ -27,14 +33,17 @@
 
           {% else %}
 
-          <li><a href="{% url 'about' %}">About</a></li>
-          <li><a href="{% url 'home' %}">Login</a></li>
-          <li><a href="{% url 'signup' %}">Sign Up</a></li>
-           <a href="/practice/">Practice</a> 
+          <li class="font-mono text-lg font-semibold">
+            <a href="{% url 'about' %}">About</a></li>
+          <li class="font-mono text-lg font-semibold">
+            <a href="{% url 'signup' %}">Sign Up</a></li>
           {% endif %}
         </ul>
+        </nav>
+        </header>
     <main>
         {% block content %}{% endblock %}
     </main>
 </body>
 </html>
+

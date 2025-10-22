@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Login | MTEL ESL Prep{% endblock %}
+
+{% block content %}
+<h1>Login</h1>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button type="submit" class="btn submit">Login</button>
+</form>
+{% endblock %}

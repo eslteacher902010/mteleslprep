@@ -10,20 +10,20 @@
   <h1>Short Answer Questions</h1>
 
   {% for short in shorts %}
-  <div class="question-card">
+  <div class="question-card bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
     <a href="{% url 'short-detail' short.id %}">
-      <div class="question-content">
+      <div class="question-content font-mono text-sm font-semibold">
         <h3>{{ short.prompt}}</h3>
       </div>
     </a>
   </div>
   {% empty %}
-  <p>No short-answer questions available yet.</p>
+  <p class="font-mono text-lg font-semibold">No short-answer questions available yet.</p>
   {% endfor %}
 
     {% if user.is_authenticated %}
     <ul>
-      <li><a href="{% url 'short-create' %}">Add a Short Answer Question</a></li>
+      <li><a href="{% url 'short-create' %}">Add a short answer question</a></li>
     </ul>
   {% endif %}
 

@@ -10,5 +10,12 @@ from .models import (
 admin.site.register(ShortAnswerQuestion)
 admin.site.register(LongAnswerQuestion)
 admin.site.register(MultipleChoiceQuestion)
-admin.site.register(PracticeTest)
+# admin.site.register(PracticeTest)
 admin.site.register(UserResponse)
+
+class PracticeTestAdmin(admin.ModelAdmin):
+    list_display = ('user', 'date_taken', 'score')
+    filter_horizontal = ('short_answer_questions', 'long_answer_questions', 'mcq_questions')
+
+
+admin.site.register(PracticeTest, PracticeTestAdmin)
