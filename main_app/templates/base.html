@@ -7,15 +7,32 @@
     <link rel="stylesheet" href="{% static 'main_app/style.css' %}">
 </head>
 <body>
-    <header>
-        <h1>MTEL ESL Prep</h1>
-        <nav>
-            <a href="/">Home</a> |
-            <a href="/about/">About</a> |
-            <a href="/practice/">Practice</a> |
-        </nav>
-    </header>
+      <h1><a href="{% url 'home' %}">MTEL ESL Prep</a></h1>
+      <nav>
+        <ul>
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'question-index' %}">All Questions</a></li>
+          <li><a href="{% url 'short-create' %}">Add Short Question</a></li>
+          <li><a href="{% url 'long-create' %}">Add Long Question</a></li>
+          <li><a href="{% url 'mcq-create' %}">Add MCQ</a></li>
+           <a href="/practice/">Practice</a> 
+           <li><a href="{% url 'about' %}">About</a></li>
+          
+            <li>
+            <form id="logout-form" method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit">Log out</button>
+            </form>
+          </li>
 
+          {% else %}
+
+          <li><a href="{% url 'about' %}">About</a></li>
+          <li><a href="{% url 'home' %}">Login</a></li>
+          <li><a href="{% url 'signup' %}">Sign Up</a></li>
+           <a href="/practice/">Practice</a> 
+          {% endif %}
+        </ul>
     <main>
         {% block content %}{% endblock %}
     </main>

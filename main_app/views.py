@@ -44,6 +44,9 @@ def about(request):
     return render(request, 'main_app/about.html')
 
 
+
+
+
 def signup(request):
     error_message = ''
     if request.method == 'POST':
@@ -55,7 +58,7 @@ def signup(request):
             user = form.save()
             # This is how we log a user in
             login(request, user)
-            return redirect('card-index')
+            return redirect('question-index')
         else:
             error_message = 'Invalid sign up - try again'
     # A bad POST or a GET request, so render signup.html with an empty form
@@ -88,21 +91,18 @@ def question_index(request):
 #short answer 
 class ShortQuestionList(ListView):
     model = ShortAnswerQuestion
-    template_name = 'main_app/short/short_list.html'
     context_object_name = 'shorts'
+    template_name = 'main_app/short/short_list.html'
 
 class ShortQuestionDetail(DetailView):
     model = ShortAnswerQuestion
-    template_name = 'main_app/short/short_detail.html'
     context_object_name = 'question'
-
-class ShortQuestionDelete(DeleteView):
-    model = ShortAnswerQuestion
-    success_url = '/short-questions/'
+    template_name = 'main_app/short/short_detail.html'
 
 class ShortAnswerQuestionCreate(LoginRequiredMixin, CreateView):
     model = ShortAnswerQuestion
     fields = ['prompt', 'correct_answer'] 
+    template_name = 'main_app/short/short_form.html'
 
     def form_valid(self, form):
         form.instance.user = self.request.user  #assign the logged-in user as the owner
@@ -111,10 +111,12 @@ class ShortAnswerQuestionCreate(LoginRequiredMixin, CreateView):
 class ShortAnswerQuestionUpdate(LoginRequiredMixin,UpdateView):
     model = ShortAnswerQuestion
     fields = ['prompt', 'correct_answer'] 
+    template_name = 'main_app/short/short_form.html'
 
 class ShortAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
     model = ShortAnswerQuestion
-    success_url = '/short-questions/'
+    success_url = '/questions/short/'
+    template_name = 'main_app/question_confirm_delete.html'
 
 
 #long answer
@@ -132,6 +134,7 @@ class LongQuestionDetail(DetailView):
 class LongAnswerQuestionCreate(LoginRequiredMixin, CreateView):
     model = LongAnswerQuestion
     fields = ['prompt', 'sample_answer']
+    template_name = 'main_app/long/long_form.html'
 
     def form_valid(self, form): 
         form.instance.user = self.request.user 
@@ -140,27 +143,32 @@ class LongAnswerQuestionCreate(LoginRequiredMixin, CreateView):
 class LongAnswerQuestionUpdate(LoginRequiredMixin, UpdateView):
     model = LongAnswerQuestion
     fields = ['prompt', 'sample_answer']
+    template_name = 'main_app/long/long_form.html'
+
 
 class LongAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
     model = LongAnswerQuestion
-    success_url = '/long-questions/'
+    success_url = '/questions/long/'
+    template_name = 'main_app/question_confirm_delete.html'
 
 
 #multiple choice
 
 class MCQList(ListView):
     model = MultipleChoiceQuestion
-    template_name = 'main_app/mcq/mcq_list.html'
     context_object_name = 'mcqs'
+    template_name = 'main_app/mcq/mcq_list.html'
+
 
 class MCQDetail(DetailView):
     model = MultipleChoiceQuestion
-    template_name = 'main_app/mcq/mcq_detail.html'
     context_object_name = 'question'
+    template_name = 'main_app/mcq/mcq_detail.html'
 
 class MultipleChoiceQuestionCreate(LoginRequiredMixin, CreateView):
     model = MultipleChoiceQuestion
     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+    template_name = 'main_app/mcq/mcq_form.html'
 
     def form_valid(self, form): 
         form.instance.user = self.request.user 
@@ -169,10 +177,12 @@ class MultipleChoiceQuestionCreate(LoginRequiredMixin, CreateView):
 class MultipleChoiceQuestionUpdate(LoginRequiredMixin, UpdateView):
     model = MultipleChoiceQuestion
     fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+    template_name = 'main_app/mcq/mcq_form.html'
 
 class MultipleChoiceQuestionDelete(LoginRequiredMixin, DeleteView):
     model = MultipleChoiceQuestion
-    success_url = '/mcq-questions/'
+    success_url = '/questions/mcq-questions/'
+    template_name = 'main_app/question_confirm_delete.html'
 
 
 

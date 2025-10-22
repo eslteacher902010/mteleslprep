@@ -10,15 +10,21 @@
   <h1>Long Answer Questions</h1>
 
   {% for long in longs %}
-  <div class="question-card">
-    <a href="{% url 'long-detail' long.id %}">
-      <div class="question-content">
-        <h3>{{ long.prompt}}</h3>
-      </div>
-    </a>
-  </div>
+    <div class="question-card">
+      <a href="{% url 'long-detail' long.id %}">
+        <div class="question-content">
+          <h3>{{ long.prompt }}</h3>
+        </div>
+      </a>
+    </div>
   {% empty %}
-  <p>No long-answer questions available yet.</p>
+    <p>No long-answer questions available yet.</p>
   {% endfor %}
+
+  {% if user.is_authenticated %}
+    <ul>
+      <li><a href="{% url 'long-create' %}">Add a Long Answer Question</a></li>
+    </ul>
+  {% endif %}
 </section>
 {% endblock %}

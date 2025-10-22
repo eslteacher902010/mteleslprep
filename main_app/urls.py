@@ -14,8 +14,9 @@ urlpatterns = [
     path('questions/short/', views.ShortQuestionList.as_view(), name='short-index'),
     path('questions/short/<int:pk>/', views.ShortQuestionDetail.as_view(), name='short-detail'),
     path('questions/short/create/', views.ShortAnswerQuestionCreate.as_view(), name='short-create'),
-    path('questions/short/update/', views.ShortAnswerQuestionUpdate.as_view(), name='short-update'),
-    path('questions/short/delete/', views.ShortQuestionDelete.as_view(), name='short-delete'),
+    path('questions/short/<int:pk>/update/', views.ShortAnswerQuestionUpdate.as_view(), name='short-update'),
+    path('questions/short/<int:pk>/delete/', views.ShortAnswerQuestionDelete.as_view(), name='short-delete'),
+
  
 
     # Long answer 
@@ -32,6 +33,8 @@ urlpatterns = [
     path('questions/mcq/create/', views.MultipleChoiceQuestionCreate.as_view(), name='mcq-create'),
     path('questions/mcq/update/', views.MultipleChoiceQuestionUpdate.as_view(), name='mcq-update'),
     path('questions/mcq/delete/', views.MultipleChoiceQuestionDelete.as_view(), name='mcq-delete'),
+
+    path('accounts/signup/', views.signup, name='signup'),
 
     # # Create / update / delete 
     # path('questions/create/', views.QuestionCreate.as_view(), name='question-create'),

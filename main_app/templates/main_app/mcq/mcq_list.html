@@ -19,5 +19,12 @@
   {% empty %}
   <p>No multiple-choice questions available yet.</p>
   {% endfor %}
+
+  {% if user.is_authenticated %}
+    <ul>
+      <li><a href="{% url 'mcq-create' %}">Add a Long Answer Question</a></li>
+    </ul>
+  {% endif %}
+
 </section>
 {% endblock %}

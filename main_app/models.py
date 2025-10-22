@@ -12,12 +12,11 @@ class ShortAnswerQuestion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
 
-
     def __str__(self):
         return f"Short: {self.prompt[:50]}"
     
     def get_absolute_url(self):
-        return reverse('short-detail', kwargs={'short_id': self.id})
+        return reverse('short-detail', kwargs={'pk': self.id})
 
 
 # Long Answer Question

@@ -20,5 +20,13 @@
   {% empty %}
   <p>No short-answer questions available yet.</p>
   {% endfor %}
+
+    {% if user.is_authenticated %}
+    <ul>
+      <li><a href="{% url 'short-create' %}">Add a Short Answer Question</a></li>
+    </ul>
+  {% endif %}
+
+
 </section>
 {% endblock %}
