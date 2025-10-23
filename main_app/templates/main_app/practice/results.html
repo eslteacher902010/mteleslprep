@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<main class="mt-28 px-10">
+  <div class="max-w-4xl mx-auto bg-white/90 rounded-xl shadow-lg p-8 text-black mt-20 py-20 justify-center mt-20 py-30">
+    <h1 class="text-3xl font-bold text-center mb-6">
+      Results for: {{ practice_test.title }}
+    </h1>
+
+    <p class="text-center text-gray-600 mb-6">
+      Completed on {{ practice_test.date_taken|date:"F j, Y, g:i a" }}
+    </p>
+
+    <div class="text-center mb-8">
+      <p class="text-xl font-semibold">
+        Final Score: <span class="text-blue-700">{{ practice_test.score|floatformat:1 }}%</span>
+      </p>
+    </div>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Responses</h2>
+      <ul class="space-y-4">
+        {% for r in responses %}
+          <li class="border border-gray-300 rounded-md bg-white p-4">
+            <p class="font-semibold">
+              {{ r.question_type|title }} Question
+            </p>
+            <p class="text-gray-700 mt-1">
+              <strong>Your Answer:</strong> {{ r.user_answer|default:"(No answer provided)" }}
+            </p>
+            {% if r.question_type == "mcq" %}
+  {% if r.is_correct %}
+    <p class="text-green-600 font-semibold mt-2">Correct!</p>
+  {% else %}
+    <p class="text-red-600 font-semibold mt-2">Incorrect</p>
+    <p class="text-gray-600">Correct answer: {{ r.correct_answer|default:"(Not recorded)" }}</p>
+  {% endif %}
+{% elif r.question_type == "long" %}
+  <p class="text-yellow-600 font-semibold mt-2">Open Response</p>
+  <p class="text-gray-600">Sample answer: {{ r.sample_answer|default:"(No sample answer available)" }}</p>
+{% else %}
+  <p class="text-yellow-600 font-semibold mt-2">Open Response</p>
+{% endif %}
+
+          </li>
+        {% empty %}
+          <p class="italic text-gray-500">No responses recorded for this test.</p>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <div class="flex justify-center mt-8 gap-4">
+      <a href="{% url 'practice-test-index' %}" 
+         class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+        Back to Tests
+      </a>
+      <a href="{% url 'practice-take' practice_test.id %}"
+         class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md">
+        Retake Test
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

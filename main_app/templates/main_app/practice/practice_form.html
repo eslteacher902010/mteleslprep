@@ -1,26 +1,61 @@
-{% extends 'base.html' %} 
-{% load static %} 
+{% extends 'base.html' %}
+{% load static %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}" />
-{% endblock %} 
+{% endblock %}
 
 {% block content %}
-<div class="page-header justify-center mt-20 py-30">
-  {% if test %}
-    <h1>Edit Practice Test: {{ test.title }}</h1>
-  {% else %}
-    <h1>Create your MTEL ELL Practice Test:</h1>
-    <p>Fill out the form below to create your practice test.</p>
-  {% endif %}
-  <img src="{% static 'images/full_moon.png' %}" alt="A full moon" />
-</div>
+<main class="mt-28 px-10 justify-center mt-20 py-30 text-mono">
+  <div class="max-w-6xl mx-auto bg-white/80 rounded-xl shadow-lg p-8 flex flex-col gap-10 ">
 
-<form action="" method="post" class="form-container">
-  {% csrf_token %}
-  <table>
-    {{ form.as_table }}
-  </table>
-  <button class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded" type="submit">Submit!</button>
-</form>
-{% endblock %} 
+    <header class="text-center">
+      {% if test %}
+        <h1 class="text-3xl font-bold mb-2">Edit Practice Test: {{ test.title }}</h1>
+      {% else %}
+        <h1 class="text-3xl font-bold mb-2">Create Your MTEL ELL Practice Test</h1>
+      {% endif %}
+      <img src="{% static 'images/full_moon.png' %}" alt="A full moon" class="w-20 mx-auto mt-3" />
+    </header>
+
+    <!-- Main layout -->
+    <div class="flex flex-col lg:flex-row justify-between gap-4">
+
+      <!-- Available questions (just for reference / preview) -->
+      <section class="w-full lg:w-1/2 bg-gray-50 rounded-lg shadow p-3">
+        <div class="space-y-4 max-h-[500px] overflow-y-auto">
+          {% for question in mcq_questions %}
+            <div class="border border-gray-300 rounded-md p-3 bg-white">
+              <p class="mb-2">{{ question.prompt }}</p>
+            </div>
+          {% endfor %}
+          {% for question in short_questions %}
+            <div class="border border-gray-300 rounded-md p-3 bg-white">
+              <p class="mb-2">{{ question.prompt }}</p>
+            </div>
+          {% endfor %}
+          {% for question in long_questions %}
+            <div class="border border-gray-300 rounded-md p-3 bg-white">
+              <p class="mb-2">{{ question.prompt }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <!-- Form -->
+      <section class="w-full lg:w-1/2 bg-gray-50 rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Select Questions for Your Test</h2>
+        <form method="POST">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit"
+          class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md">
+            Save Practice Test
+          </button>
+        </form>
+      </section>
+
+    </div>
+  </div>
+</main>
+{% endblock %}

@@ -64,9 +64,9 @@ class PracticeTest(models.Model):
     title = models.CharField(max_length=200, default="Untitled Test")
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.FloatField(default=0)
-    short_answer_questions = models.ManyToManyField(ShortAnswerQuestion)
-    long_answer_questions = models.ManyToManyField(LongAnswerQuestion)
-    mcq_questions = models.ManyToManyField(MultipleChoiceQuestion)
+    short_answer_questions = models.ManyToManyField(ShortAnswerQuestion, blank=True)
+    long_answer_questions = models.ManyToManyField(LongAnswerQuestion, blank=True)
+    mcq_questions = models.ManyToManyField(MultipleChoiceQuestion, blank=True)
 
 
     def __str__(self):

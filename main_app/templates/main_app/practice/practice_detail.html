@@ -1,33 +1,80 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block head %}
-<link rel="stylesheet" href="{% static 'css/questions/short-index.css' %}">
-{% endblock %}
-
 {% block content %}
-<section class="toys justify-center mt-20 py-30">
-  <div class="subsection-title">
-    <h2>Toys</h2>
-    <img src="{% static 'images/string.svg' %}" alt="A ball of string" />
-    <img src="{% static 'images/mouse.svg' %}" alt="A mouse" />
-    <img src="{% static 'images/fish.svg' %}" alt="A fishy toy" />
+<main class="mt-28 px-10 justify justify-center mt-20 py-30 text-white font-mono text-md">
+  <div class="max-w-4xl mx-auto bg-white/90 rounded-xl shadow-lg p-8">
+    <h1 class="text-3xl font-bold mb-6 text-center">
+      Practice Test: {{ practice_test.title }}
+    </h1>
+
+    <p class="text-gray-600 mb-8 text-center">
+      Created on {{ practice_test.date_taken|date:"F j, Y, g:i a" }}
+    </p>
+
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-blue-700 mb-3">Multiple Choice Questions</h2>
+      {% for question in mcq_questions %}
+        <div class="border border-gray-300 p-4 mb-3 rounded-md bg-white">
+          <p class="font-medium">{{ question.prompt }}</p>
+          <ul class="mt-2 list-disc list-inside text-gray-700">
+            <li>A. {{ question.option_a }}</li>
+            <li>B. {{ question.option_b }}</li>
+            <li>C. {{ question.option_c }}</li>
+            <li>D. {{ question.option_d }}</li>
+          </ul>
+        </div>
+      {% empty %}
+        <p class="italic text-gray-500">No multiple-choice questions.</p>
+      {% endfor %}
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-2xl font-semibold text-green-700 mb-3">Short Answer Questions</h2>
+      {% for question in short_questions %}
+        <div class="border border-gray-300 p-4 mb-3 rounded-md bg-white">
+          <p class="font-medium">{{ question.prompt }}</p>
+        </div>
+      {% empty %}
+        <p class="italic text-gray-500">No short answer questions.</p>
+      {% endfor %}
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-semibold text-purple-700 mb-3">Long Answer Questions</h2>
+      {% for question in long_questions %}
+        <div class="border border-gray-300 p-4 mb-3 rounded-md bg-white">
+          <p class="font-medium">{{ question.prompt }}</p>
+        </div>
+      {% empty %}
+        <p class="italic text-gray-500">No long answer questions.</p>
+      {% endfor %}
+    </section>
   </div>
-  <h3>Available Toys</h3>
-  <div class="subsection-content">
-    {% for question in mcq_questions %}
-      <div class="toy-container">
-        <div class="color-block" ></div>
-        <p>{{ question.detail }}</p>
-        <form action="{% url 'associate-question' practice.id question.id 'mcq' %}" method="post">
-          {% csrf_token %}
-          <button type="submit" class="btn submit">Add Question</button>
-        </form> 
-      </div>
-    {% endfor %}
+
+
+  <div class="btn-row font-mono text-lg font-semibold text-white">
+
+    {% if user == practice_test.user %}
+    <a href="{% url 'practice-test-update' practice_test.id %}" class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">Edit</a>
+    <a href="{% url 'practice-test-delete' practice_test.id %}" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded">Delete</a>
+    <a href="{% url 'practice-test-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Tests</a>
+     <a href="{% url 'practice-take' practice_test.id %}"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+      Take Test
+    </a>
+    {% else %}
+    <a href="{% url 'practice-take' practice_test.id %}"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+      Take Test
+    </a>
+    <a href="{% url 'practice-test-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Tests</a>
+    {% endif %}
   </div>
-</section>
+</div>
+
+</main>
+
 
 {% endblock %}
-
 

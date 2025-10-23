@@ -6,29 +6,32 @@
 {% endblock %}
 
 {% block content %}
-<section class="max-w-xl mx-auto p-6 space-y-4 text-white justify-center mt-20 py-30">
+<section class="max-w-xl mx-auto p-6 space-y-4 text-white mt-20 py-20">
   <h1 class="text-xl font-semibold text-center mb-4">Practice Tests</h1>
 
   {% for test in practice_tests %}
     <div class="bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
-      <a href="{% url 'practice-test-detail' test.id %}">
+      <a href="{% url 'practice-detail' test.id %}">
         <div class="question-content">
           <h3 class="text-sm font-medium">{{ test.title }}</h3>
           <p class="text-xs opacity-80 mt-1">
-            Created by {{ test.user.username }} on {{ test.created_at|date:"M d, Y" }}
+            Created by {{ test.user.username }} on {{ test.date_taken|date:"M d, Y" }}
           </p>
         </div>
       </a>
     </div>
   {% empty %}
-    <p class="text-center text-sm">No practice tests available yet.</p>
+    <p class="text-center text-lg font-mono">No practice tests available yet.</p>
   {% endfor %}
 
   {% if user.is_authenticated %}
-    <div class="text-center mt-6">
-      <a href="{% url 'practice-test-create' %}" class="text-blue-300 hover:underline text-xs">
-        Create a new practice test
-      </a>
+    <div class="flex justify-center mt-8">
+      <form action="{% url 'practice-test-create' %}" class="w-full max-w-sm">
+        <button type="submit"
+          class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md">
+          + Create a new practice test
+        </button>
+      </form>
     </div>
   {% endif %}
 </section>

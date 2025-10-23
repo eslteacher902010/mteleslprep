@@ -198,38 +198,59 @@ def associate_question(request, practice_id, question_id, question_type):
     #if else statements, if question type is X, look at here in the database to find the question and associate it//long answer.objects//short answer.objects 
     if question_type =="short":
         question = ShortAnswerQuestion.objects.get(id=question_id)
+        practice.short_answer_questions.add(question)
+
     elif question_type=="long":
         question = LongAnswerQuestion.objects.get(id=question_id)
+        practice.long_answer_questions.add(question)
     elif question_type=="mcq":
         question = MultipleChoiceQuestion.objects.get(id=question_id)
+        practice.mcq_questions.add(question)
 
-    practice.questions.add(question)
-    return redirect('practice-detail', practice_id=practice_id)
+    return redirect('practice-detail', pk=practice_id)
 
 
 
-@login_required
-def practiceTestDetail(request):
-    mcq_questions = MultipleChoiceQuestion.objects.all()
-    short_questions = ShortAnswerQuestion.objects.all()
-    long_questions = LongAnswerQuestion.objects.all()
-    return render(request, 'main_app/practice/practice_detail.html', {"mcq_questions":mcq_questions, "short_questions": short_questions, "long_questions": long_questions})
+class PracticeTestDetail(LoginRequiredMixin, DetailView):
+    model = PracticeTest
+    template_name = 'main_app/practice/practice_detail.html'
+    context_object_name = 'practice_test'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        practice_test = self.get_object()
+        context['mcq_questions'] = practice_test.mcq_questions.all()
+        context['short_questions'] = practice_test.short_answer_questions.all()
+        context['long_questions'] = practice_test.long_answer_questions.all()
+        return context
 
 
 class CreatePracticeTest(LoginRequiredMixin, CreateView):
     model = PracticeTest
-    fields = [ 'title', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']   
+    form_class = PracticeTestForm
     template_name = 'main_app/practice/practice_form.html'
+    success_url = '/practice-tests/'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
-        # Assign the logged in user (self.request.user)
-        form.instance.user = self.request.user  # form.instance is the cat
-        # Let the CreateView do its job as usual
-        return super().form_valid(form) #this essentially interrupts the normal flow of the form submission to add the user before saving
+        form.instance.user = self.request.user
+
+        self.object = form.save(commit=False)
+        self.object.save()
+
+        form.save_m2m()
+
+        return redirect(self.object.get_absolute_url())
+
+
 
 class PracticeTestList(ListView):
     model = PracticeTest
-    template_name = 'main_app/practice_test_list.html'  # you can customize
+    template_name = 'main_app/practice/practice_list.html'  
     context_object_name = 'practice_tests'  
 
 class UpdatePracticeTest(LoginRequiredMixin, UpdateView):
@@ -245,7 +266,85 @@ class UpdatePracticeTest(LoginRequiredMixin, UpdateView):
 class DeletePracticeTest(LoginRequiredMixin, DeleteView):
     model = PracticeTest
     template_name = 'main_app/practice/practice_confirm_delete.html'
-    success_url = 'practice-test-index'
+    success_url = '/practice-tests/'
+
+
+
+def associate_question(request, practice_id, question_id, question_type):
+    practice = PracticeTest.objects.get(id=practice_id)
+    #collect all the practice test objects
+    if question_type =="short":
+        question = ShortAnswerQuestion.objects.get(id=question_id)
+        practice.short_answer_questions.add(question)
+
+    elif question_type=="long":
+        question = LongAnswerQuestion.objects.get(id=question_id)
+        practice.long_answer_questions.add(question)
+    elif question_type=="mcq":
+        question = MultipleChoiceQuestion.objects.get(id=question_id)
+        practice.mcq_questions.add(question)
+
+
+    return redirect('practice-detail', pk=practice_id)
+
+@login_required
+def take_practice_test(request, pk):
+    practice = get_object_or_404(PracticeTest, id=pk)
+    test_questions = {
+        "mcq": practice.mcq_questions.all(),
+        "short": practice.short_answer_questions.all(),
+        "long": practice.long_answer_questions.all()
+    }
+
+    if request.method == 'GET': #if it's a get--give them the test
+        return render(request, 'main_app/practice/take_practice_test.html', {
+            'practice_test': practice,
+            'questions': test_questions
+        })
+    else:  # POST request--we score it for them
+        score = 0
+        total = 0
+
+        for question_type, questions in test_questions.items():
+            for question in questions:
+                user_answer = request.POST.get(f'{question_type}_question_{question.id}', '').strip()
+
+                is_correct = False
+                if question_type == 'mcq':
+                    total += 1
+                    if user_answer == question.correct_answer:
+                        score += 1
+                        is_correct = True
+
+                UserResponse.objects.create(
+                    user=request.user,
+                    test=practice,
+                    question_type=question_type,
+                    question_id=question.id,
+                    user_answer=user_answer,
+                    is_correct=is_correct
+                )
+
+        if total > 0:
+            score_percent = (score / total) * 100
+            practice.score_percent = score_percent
+            practice.save()
+
+    return redirect('practice-detail', pk=pk)
+
+
+
+@login_required #this is the redirect after taking the test
+def practice_results(request, pk):
+    test = get_object_or_404(PracticeTest, pk=pk)
+    responses = UserResponse.objects.filter(test=test)
+    return render(request, "main_app/practice/results.html", {
+        "practice_test": test,
+        "responses": responses
+    })
+
+
+
 
 # class QuestionCreate(CreateView):
 #     model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion

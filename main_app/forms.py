@@ -38,10 +38,19 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
 class PracticeTestForm(forms.ModelForm):
     class Meta:
         model = PracticeTest
-        fields = ['user', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']
+        fields = ['title', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']
         widgets = {
             'title': forms.TextInput(attrs={'placeholder': 'Enter a descriptive title'}),
             'short_answer_questions': forms.CheckboxSelectMultiple(),
             'long_answer_questions': forms.CheckboxSelectMultiple(),
             'mcq_questions': forms.CheckboxSelectMultiple(),
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields['short_answer_questions'].queryset = ShortAnswerQuestion.objects.filter(user=user)
+            self.fields['long_answer_questions'].queryset = LongAnswerQuestion.objects.filter(user=user)
+            self.fields['mcq_questions'].queryset = MultipleChoiceQuestion.objects.filter(user=user)

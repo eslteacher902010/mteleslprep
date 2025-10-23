@@ -44,12 +44,15 @@ urlpatterns = [
     path('practice/<int:practice_id>/associate-question/<int:question_id>/question_type/<str:question_type>/', views.associate_question, name='associate-question'),
 
     # Practice tests
-    path('practice/', views.practiceTestDetail, name='practice'),
     path('practice-tests/', views.PracticeTestList.as_view(), name='practice-test-index'),
-    path('practice-tests/<int:pk>/', views.practiceTestDetail, name='practice-test-detail'),
+    path('practice-tests/<int:pk>/', views.PracticeTestDetail.as_view(), name='practice-detail'),
     path('practice-tests/create/', views.CreatePracticeTest.as_view(), name='practice-test-create'),
     path('practice-tests/<int:pk>/update/', views.UpdatePracticeTest.as_view(), name='practice-test-update'),
     path('practice-tests/<int:pk>/delete/', views.DeletePracticeTest.as_view(), name='practice-test-delete'),
+    path('practice-tests/<int:pk>/take/', views.take_practice_test, name='practice-take'),
+    path('practice-tests/<int:pk>/results/', views.practice_results, name='practice-results'),
+
+
 
 
     # # Create / update / delete 
