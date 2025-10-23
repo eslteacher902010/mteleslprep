@@ -1,27 +1,28 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/questions/question-detail.css' %}" />
 {% endblock %}
 
 {% block content %}
-<div class="card
-  {% if question.correct_answer|length > 50 %}
-    pink-card
-  {% elif question.correct_answer|length > 20 %}
-    yellow-card
-  {% else %}
-    green-card
-  {% endif %}
-">
+<div class="max-w-md mx-auto bg-white/30 p-6 rounded-lg text-white text-[13px] leading-relaxed shadow-sm space-y-3">
 
-  <h1>{{ question.prompt }}</h1>
-  <p><strong>Answer:</strong> {{ question.correct_answer }}</p>
+  <h1 class="text-base font-semibold text-center mb-2">{{ question.prompt }}</h1>
 
-  <div class="btn-row">
-    <a href="{% url 'long-update' question.id %}" class="btn warn">Edit</a>
-    <a href="{% url 'long-delete' question.id %}" class="btn danger">Delete</a>
-    <a href="{% url 'long-index' %}" class="btn">Back to Questions</a>
+  <div class="bg-slate-800/70 p-3 rounded-md">
+    <p class="text-xs">
+      <span class="text-yellow-300 font-semibold">Sample Answer:</span>
+      {{ question.sample_answer }}
+    </p>
   </div>
+
+  
+  <div class="btn-row font-mono text-lg font-semibold text-white">
+    <a href="{% url 'short-update' question.id %}" class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">Edit</a>
+    <a href="{% url 'short-delete' question.id %}" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded">Delete</a>
+    <a href="{% url 'short-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Questions</a>
+  </div>
+
 </div>
 {% endblock %}

@@ -20,6 +20,8 @@ from datetime import date
 import random
 
 from main_app import forms 
+from .forms import PracticeTestForm
+
 
 
 from .models import (
@@ -37,10 +39,6 @@ def home(request):
 # class CustomLoginView(LoginView):
 #     template_name = 'login.html'
 #     redirect_authenticated_user = True
-
-def practice(request):
-    return render(request, 'main_app/practice.html')
-
 
 def about(request):
     return render(request, 'main_app/about.html')
@@ -88,6 +86,7 @@ def question_index(request):
         'short_questions': short_questions,
         'long_questions': long_questions,
         'mcq_questions': mcq_questions,
+        'all_questions': all_questions,
     }
 
     return render(request, 'main_app/questions/index.html', context)
@@ -189,7 +188,64 @@ class MultipleChoiceQuestionDelete(LoginRequiredMixin, DeleteView):
     template_name = 'main_app/question_confirm_delete.html'
 
 
+# practice test views
 
+def associate_question(request, practice_id, question_id, question_type):
+    # Note that you can pass a question's id instead of the whole object
+    # PracticeTest.objects.get(id=practice_id).questions.add(question_id)
+    practice = PracticeTest.objects.get(id=practice_id)
+
+    #if else statements, if question type is X, look at here in the database to find the question and associate it//long answer.objects//short answer.objects 
+    if question_type =="short":
+        question = ShortAnswerQuestion.objects.get(id=question_id)
+    elif question_type=="long":
+        question = LongAnswerQuestion.objects.get(id=question_id)
+    elif question_type=="mcq":
+        question = MultipleChoiceQuestion.objects.get(id=question_id)
+
+    practice.questions.add(question)
+    return redirect('practice-detail', practice_id=practice_id)
+
+
+
+@login_required
+def practiceTestDetail(request):
+    mcq_questions = MultipleChoiceQuestion.objects.all()
+    short_questions = ShortAnswerQuestion.objects.all()
+    long_questions = LongAnswerQuestion.objects.all()
+    return render(request, 'main_app/practice/practice_detail.html', {"mcq_questions":mcq_questions, "short_questions": short_questions, "long_questions": long_questions})
+
+
+class CreatePracticeTest(LoginRequiredMixin, CreateView):
+    model = PracticeTest
+    fields = [ 'title', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']   
+    template_name = 'main_app/practice/practice_form.html'
+
+    def form_valid(self, form):
+        # Assign the logged in user (self.request.user)
+        form.instance.user = self.request.user  # form.instance is the cat
+        # Let the CreateView do its job as usual
+        return super().form_valid(form) #this essentially interrupts the normal flow of the form submission to add the user before saving
+
+class PracticeTestList(ListView):
+    model = PracticeTest
+    template_name = 'main_app/practice_test_list.html'  # you can customize
+    context_object_name = 'practice_tests'  
+
+class UpdatePracticeTest(LoginRequiredMixin, UpdateView):
+    model = PracticeTest
+    fields = ['title', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']
+    template_name = 'main_app/practice/practice_form.html'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class DeletePracticeTest(LoginRequiredMixin, DeleteView):
+    model = PracticeTest
+    template_name = 'main_app/practice/practice_confirm_delete.html'
+    success_url = 'practice-test-index'
 
 # class QuestionCreate(CreateView):
 #     model = MultipleChoiceQuestion  # or ShortAnswerQuestion / LongAnswerQuestion

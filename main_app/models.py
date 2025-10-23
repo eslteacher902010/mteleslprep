@@ -61,6 +61,7 @@ class MultipleChoiceQuestion(models.Model):
 # Practice test session
 class PracticeTest(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="practice_tests")
+    title = models.CharField(max_length=200, default="Untitled Test")
     date_taken = models.DateTimeField(auto_now_add=True)
     score = models.FloatField(default=0)
     short_answer_questions = models.ManyToManyField(ShortAnswerQuestion)
@@ -70,6 +71,9 @@ class PracticeTest(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date_taken.strftime('%Y-%m-%d %H:%M')}"
+    
+    def get_absolute_url(self):
+        return reverse('practice-detail', kwargs={'pk': self.id})
 
 
 # Individual user responses

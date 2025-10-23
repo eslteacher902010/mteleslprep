@@ -1,5 +1,5 @@
 from django import forms
-from .models import ShortAnswerQuestion, LongAnswerQuestion, MultipleChoiceQuestion
+from .models import PracticeTest, ShortAnswerQuestion, LongAnswerQuestion, MultipleChoiceQuestion
 
 
 
@@ -32,4 +32,16 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
             'option_c': forms.TextInput(),
             'option_d': forms.TextInput(),
             'correct_answer': forms.Select(),
+        }
+
+
+class PracticeTestForm(forms.ModelForm):
+    class Meta:
+        model = PracticeTest
+        fields = ['user', 'short_answer_questions', 'long_answer_questions', 'mcq_questions']
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Enter a descriptive title'}),
+            'short_answer_questions': forms.CheckboxSelectMultiple(),
+            'long_answer_questions': forms.CheckboxSelectMultiple(),
+            'mcq_questions': forms.CheckboxSelectMultiple(),
         }

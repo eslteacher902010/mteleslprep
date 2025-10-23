@@ -6,25 +6,25 @@
 {% endblock %}
 
 {% block content %}
-<section class="long-answer">
-  <h1>Long Answer Questions</h1>
+<section class="max-w-xl mx-auto p-6 space-y-4 text-white justify-center mt-20 py-30">
+  <h1 class="text-xl font-semibold text-center mb-4">Long Answer Questions</h1>
 
   {% for long in longs %}
-    <div class="question-card bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
+    <div class="bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
       <a href="{% url 'long-detail' long.id %}">
         <div class="question-content">
-          <h3>{{ long.prompt }}</h3>
+          <h3 class="text-sm leading-snug">{{ long.prompt }}</h3>
         </div>
       </a>
     </div>
   {% empty %}
-    <p>No long-answer questions available yet.</p>
+    <p class="text-center text-sm">No long-answer questions available yet.</p>
   {% endfor %}
 
   {% if user.is_authenticated %}
-    <ul>
-      <li><a href="{% url 'long-create' %}">Add a long answer question</a></li>
-    </ul>
+    <div class="text-center mt-6">
+      <a href="{% url 'long-create' %}" class="text-blue-300 hover:underline text-xs">Add a long answer question</a>
+    </div>
   {% endif %}
 </section>
 {% endblock %}

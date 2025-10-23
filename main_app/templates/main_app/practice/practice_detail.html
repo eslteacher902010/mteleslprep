@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/short-index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="toys justify-center mt-20 py-30">
+  <div class="subsection-title">
+    <h2>Toys</h2>
+    <img src="{% static 'images/string.svg' %}" alt="A ball of string" />
+    <img src="{% static 'images/mouse.svg' %}" alt="A mouse" />
+    <img src="{% static 'images/fish.svg' %}" alt="A fishy toy" />
+  </div>
+  <h3>Available Toys</h3>
+  <div class="subsection-content">
+    {% for question in mcq_questions %}
+      <div class="toy-container">
+        <div class="color-block" ></div>
+        <p>{{ question.detail }}</p>
+        <form action="{% url 'associate-question' practice.id question.id 'mcq' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn submit">Add Question</button>
+        </form> 
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endblock %}
+
+

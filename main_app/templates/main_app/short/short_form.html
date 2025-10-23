@@ -6,12 +6,12 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header font-mono text-lg font-semibold">
+<div class="page-header font-mono text-lg font-semibold justify-center mt-20 py-30">
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}
     <h1>Add a Short Answer Question</h1>
-    <p class="font-mono text-lg font-semibold"> Remember to provide a clear and concise answer.</p>
+    <p class="font-mono text-lg font-semibold text-white"> Remember to provide a clear and concise answer.</p>
   {% endif %}
   <img src="{% static 'images/Sun.png' %}" alt="A sun" />
 </div>
@@ -21,6 +21,6 @@
   <table>
     {{ form.as_table }}
   </table>
-  <button type="submit" class="btn submit">Submit!</button>
+  <button class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded" type="submit">Submit!</button>
 </form>
 {% endblock %}

@@ -1,1 +1,43 @@
-<p>coming soon</p>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/questions/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="questions justify-center mt-20 py-30">
+  <div class="subsection-title">
+    <h2>All Questions</h2>
+  </div>
+
+  <div class="subsection-content">
+    {% for question in all_questions %}
+      <div class="question-container border p-4 my-3 rounded bg-white shadow">
+        <p><strong>{{ question.prompt }}</strong></p>
+
+        {% if question.question_type == "mcq" %}
+          <ul>
+            <li>A. {{ question.option_a }}</li>
+            <li>B. {{ question.option_b }}</li>
+            <li>C. {{ question.option_c }}</li>
+            <li>D. {{ question.option_d }}</li>
+          </ul>
+
+        {% elif question.question_type == "short" %}
+          <p><em>Correct answer:</em> {{ question.correct_answer }}</p>
+
+        {% elif question.question_type == "long" %}
+          {% if question.sample_answer %}
+            <p><em>Sample answer:</em> {{ question.sample_answer }}</p>
+          {% else %}
+            <p><em>No sample answer provided.</em></p>
+          {% endif %}
+        {% endif %}
+      </div>
+    {% empty %}
+      <p>No questions found.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

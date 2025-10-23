@@ -4,9 +4,9 @@ from . import views
 urlpatterns = [
     # Home / static pages
     path('', views.home, name='home'),
-    path('practice/', views.practice, name='practice'),
     path('about/', views.about, name='about'),
     path('addq/', views.add_question, name='add-question'),
+    path('accounts/signup/', views.signup, name='signup'),
     # path('login/', views.CustomLoginView.as_view(), name='login'),
     
 
@@ -38,7 +38,19 @@ urlpatterns = [
     path('questions/mcq/<int:pk>/delete/', views.MultipleChoiceQuestionDelete.as_view(), name='mcq-delete'),
 
 
-    path('accounts/signup/', views.signup, name='signup'),
+
+
+    #associations 
+    path('practice/<int:practice_id>/associate-question/<int:question_id>/question_type/<str:question_type>/', views.associate_question, name='associate-question'),
+
+    # Practice tests
+    path('practice/', views.practiceTestDetail, name='practice'),
+    path('practice-tests/', views.PracticeTestList.as_view(), name='practice-test-index'),
+    path('practice-tests/<int:pk>/', views.practiceTestDetail, name='practice-test-detail'),
+    path('practice-tests/create/', views.CreatePracticeTest.as_view(), name='practice-test-create'),
+    path('practice-tests/<int:pk>/update/', views.UpdatePracticeTest.as_view(), name='practice-test-update'),
+    path('practice-tests/<int:pk>/delete/', views.DeletePracticeTest.as_view(), name='practice-test-delete'),
+
 
     # # Create / update / delete 
     # path('questions/create/', views.QuestionCreate.as_view(), name='question-create'),

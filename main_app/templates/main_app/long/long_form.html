@@ -6,7 +6,7 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header">
+<div class="page-header justify-center mt-20 py-30">
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}
@@ -21,6 +21,6 @@
   <table>
     {{ form.as_table }}
   </table>
-  <button type="submit" class="btn submit">Submit!</button>
+  <button class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded" type="submit">Submit!</button>
 </form>
 {% endblock %} 

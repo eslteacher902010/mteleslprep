@@ -6,13 +6,13 @@
 {% endblock %}
 
 {% block content %}
-<section class="short-answer">
+<section class="short-answer text-white justify-center mt-20 py-30 justify-center mt-20 py-30">
   <h1>Short Answer Questions</h1>
 
   {% for short in shorts %}
   <div class="question-card bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
     <a href="{% url 'short-detail' short.id %}">
-      <div class="question-content font-mono text-sm font-semibold">
+      <div class="question-content font-mono text-sm font-semibold text-white">
         <h3>{{ short.prompt}}</h3>
       </div>
     </a>
@@ -22,7 +22,7 @@
   {% endfor %}
 
     {% if user.is_authenticated %}
-    <ul>
+    <ul class="font-mono text-lg text-white">
       <li><a href="{% url 'short-create' %}">Add a short answer question</a></li>
     </ul>
   {% endif %}

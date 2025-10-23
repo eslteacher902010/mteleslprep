@@ -6,14 +6,14 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header font-mono text-lg font-semibold">
-  {% if question %}
-    <h1>Edit Question: {{ question.prompt }}</h1>
+<div class="page-header justify-center mt-20 py-30">
+  {% if test %}
+    <h1>Edit Practice Test: {{ test.title }}</h1>
   {% else %}
-    <h1>Add a multiple-choice Question</h1>
-    <p class="font-mono text-lg font-semibold"> Remember to pick a correct answer.</p>
+    <h1>Create your MTEL ELL Practice Test:</h1>
+    <p>Fill out the form below to create your practice test.</p>
   {% endif %}
-  <img src="{% static 'images/sun_behind_cloud.png' %}" alt="A sun behind a cloud" />
+  <img src="{% static 'images/full_moon.png' %}" alt="A full moon" />
 </div>
 
 <form action="" method="post" class="form-container">

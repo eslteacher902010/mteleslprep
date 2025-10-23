@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'css/practice_test_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="max-w-xl mx-auto p-6 space-y-4 text-white justify-center mt-20 py-30">
+  <h1 class="text-xl font-semibold text-center mb-4">Practice Tests</h1>
+
+  {% for test in practice_tests %}
+    <div class="bg-white/10 rounded-lg p-4 shadow-md hover:shadow-lg transition-all">
+      <a href="{% url 'practice-test-detail' test.id %}">
+        <div class="question-content">
+          <h3 class="text-sm font-medium">{{ test.title }}</h3>
+          <p class="text-xs opacity-80 mt-1">
+            Created by {{ test.user.username }} on {{ test.created_at|date:"M d, Y" }}
+          </p>
+        </div>
+      </a>
+    </div>
+  {% empty %}
+    <p class="text-center text-sm">No practice tests available yet.</p>
+  {% endfor %}
+
+  {% if user.is_authenticated %}
+    <div class="text-center mt-6">
+      <a href="{% url 'practice-test-create' %}" class="text-blue-300 hover:underline text-xs">
+        Create a new practice test
+      </a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

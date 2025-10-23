@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1>Login</h1>
-<form method="post">
+<form class="justify-center mt-20 py-30" method="post">
   {% csrf_token %}
   {{ form.as_p }}
   <input type="hidden" name="next" value="{{ next }}">
