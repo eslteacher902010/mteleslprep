@@ -1,6 +1,6 @@
 # MTEL ESL Practice Test App
 
-![A screenshot of the practice test interface](./static/images/mtel_read.png)
+![A screenshot](main_app/static/images/mtel_read.png)
 
 ###### Image: A user-facing page where learners can take an ESL practice test with multiple question types.
 
