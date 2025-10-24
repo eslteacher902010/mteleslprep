@@ -40,6 +40,7 @@ Django, Python, PostgreSQL, SQLite, HTML, CSS, Tailwind, Gunicorn, Whitenoise, H
 * Including WIDA-aligned question tagging
 * Expanding auto-grading logic for open-ended responses
 * Integrating progress visualization with charts and graphs
+* Need to fix scoring also.
 
 ---
 
