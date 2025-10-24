@@ -1,6 +1,6 @@
 # MTEL ESL Practice Test App
 
-![A screenshot of the practice test interface](./static/images/full_moon.png)
+![A screenshot of the practice test interface](./static/images/mtel_read.png)
 
 ###### Image: A user-facing page where learners can take an ESL practice test with multiple question types.
 
@@ -22,7 +22,7 @@ You can:
 
 ## Planning Materials:
 
-[GitHub Repository](https://github.com/YOUR_USERNAME/mtel-esl-test-prep)
+[GitHub Repository](https://github.com/eslteacher902010/mteleslprep)
 [Deployed Site](https://mtel-esl-prep.herokuapp.com/)
 
 ## Attributes:
@@ -33,8 +33,6 @@ Tailwind CSS, Flexbox, and custom responsive layouts
 **Technologies Used*:
 Django, Python, PostgreSQL, SQLite, HTML, CSS, Tailwind, Gunicorn, Whitenoise, Heroku, GitHub, VSCode
 
-**AI*:
-ChatGPT and VSCode CoPilot were used for debugging assistance and pseudocode generation.
 
 **Planned Future Enhancements*:
 

@@ -6,50 +6,50 @@
 {% endblock %}
 
 {% block content %}
-<section class="max-w-xl mx-auto p-6 space-y-4 text-black mt-20 py-20 justify-center mt-20 py-30">
+<section class="max-w-xl mx-auto p-6 space-y-4 text-black mt-20 py-20 justify-center">
   <h1 class="text-xl font-semibold text-center mb-4">Take Test</h1>
 
-    <form action="{% url 'practice-results' pk=practice_test.id %}" method="post">
-
+  <form action="{% url 'practice-take' practice_test_id=practice_test.id %}" method="post">
     {% csrf_token %}
 
-    <h2 class="text-lg font-bold mt-8 text-mono text-white">Multiple Choice</h2>
-    {% for mcq in questions.mcq %}
-      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white text-mono text-white">
-        <p class="font-medium text-black text-mono text-white">{{ mcq.prompt }}</p>
-        <label><input type="radio" name="{{ mcq.id }}" value="A"> {{ mcq.option_a }}</label><br>
-        <label><input type="radio" name="{{ mcq.id }}" value="B"> {{ mcq.option_b }}</label><br>
-        <label><input type="radio" name="{{ mcq.id }}" value="C"> {{ mcq.option_c }}</label><br>
-        <label><input type="radio" name="{{ mcq.id }}" value="D"> {{ mcq.option_d }}</label>
+    <!-- Multiple Choice -->
+    <h2 class="text-lg font-bold mt-8 text-white">Multiple Choice</h2>
+    {% for mcq in mcq_questions %}
+      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white">
+        <p class="font-medium text-black">{{ mcq.prompt }}</p>
+
+        <label><input type="radio" name="mcq_question_{{ mcq.id }}" value="A"> {{ mcq.option_a }}</label><br>
+        <label><input type="radio" name="mcq_question_{{ mcq.id }}" value="B"> {{ mcq.option_b }}</label><br>
+        <label><input type="radio" name="mcq_question_{{ mcq.id }}" value="C"> {{ mcq.option_c }}</label><br>
+        <label><input type="radio" name="mcq_question_{{ mcq.id }}" value="D"> {{ mcq.option_d }}</label>
       </div>
     {% empty %}
       <p>No multiple choice questions.</p>
     {% endfor %}
 
-    <h2 class="text-lg font-bold mt-8 text-mono text-white">Short Answer</h2>
-    {% for short in questions.short %}
-      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white text-mono text-white">
-        <p class="font-medium text-white text-mono">{{ short.prompt }}</p>
-        <textarea name="{{ short.id }}" class="border rounded-md p-2 text-black w-full mt-2" rows="2"></textarea>
+    <!-- Short Answer -->
+    <h2 class="text-lg font-bold mt-8 text-white">Short Answer</h2>
+    {% for short in short_questions %}
+      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white">
+        <p class="font-medium text-black">{{ short.prompt }}</p>
+        <textarea name="short_question_{{ short.id }}" class="border rounded-md p-2 text-black w-full mt-2" rows="2"></textarea>
       </div>
     {% empty %}
       <p>No short answer questions.</p>
     {% endfor %}
-<h2 class="text-lg bg-slate-800 font-bold mt-8 text-mono text-white p-2 rounded-md">
-  Long Answer
-    </h2>
 
-    {% for long in questions.long %}
-    <div class="border border-gray-300 bg-gray-200 p-4 mb-4 rounded-md text-mono text-black text-lg shadow-sm">
-        <p class="font-medium text-black text-mono mb-2">{{ long.prompt }}</p>
+    <!-- Long Answer -->
+    <h2 class="text-lg bg-slate-800 font-bold mt-8 text-white p-2 rounded-md">Long Answer</h2>
+    {% for long in long_questions %}
+      <div class="border border-gray-300 bg-gray-200 p-4 mb-4 rounded-md text-black shadow-sm">
+        <p class="font-medium text-black mb-2">{{ long.prompt }}</p>
         <textarea 
-        name="{{ long.id }}" 
-        class="border border-gray-400 rounded-md p-2 w-full mt-2 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-500"
-        rows="4">
-        </textarea>
-    </div>
+          name="long_question_{{ long.id }}" 
+          class="border border-gray-400 rounded-md p-2 w-full mt-2 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-500"
+          rows="4"></textarea>
+      </div>
     {% empty %}
-    <p class="text-gray-600">No long answer questions.</p>
+      <p class="text-gray-600">No long answer questions.</p>
     {% endfor %}
 
     <div class="flex justify-center mt-8">
