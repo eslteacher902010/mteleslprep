@@ -20,7 +20,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True  # will disable automatically when ON_HEROKU is set
 
-ALLOWED_HOSTS = ["*"]  # ✅ allow all on Heroku
+ALLOWED_HOSTS = ["*"]  # allow all on Heroku
 
 # Application definition
 INSTALLED_APPS = [
@@ -112,4 +112,4 @@ LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 if 'ON_HEROKU' in os.environ:
-    DEBUG = False
+    DEBUG = os.environ.get("DEBUG", "0") == "1"
