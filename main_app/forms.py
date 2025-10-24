@@ -9,7 +9,7 @@ class ShortAnswerQuestionForm(forms.ModelForm):
         fields = ['prompt', 'correct_answer']
         widgets = {
             'prompt': forms.Textarea(attrs={'rows': 3}),
-            'answer': forms.Textarea(attrs={'rows': 3}),
+            'correct_answer': forms.Textarea(attrs={'rows': 3}),
         }
 
 class LongAnswerQuestionForm(forms.ModelForm):
@@ -18,7 +18,7 @@ class LongAnswerQuestionForm(forms.ModelForm):
         fields = ['prompt', 'sample_answer']
         widgets = {
             'prompt': forms.Textarea(attrs={'rows': 3}),
-            'answer': forms.Textarea(attrs={'rows': 3}),
+            'sample_answer': forms.Textarea(attrs={'rows': 3}),
         }
 
 class MultipleChoiceQuestionForm(forms.ModelForm):
