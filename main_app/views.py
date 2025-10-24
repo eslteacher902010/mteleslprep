@@ -224,7 +224,8 @@ def practice_test_detail(request, practice_id):
 
 class CreatePracticeTest(LoginRequiredMixin, CreateView):
     model = PracticeTest
-    fields = ['title', 'description', 'questions']
+    form_class = PracticeTestForm
+
 
     def form_valid(self, form):
         # Assign the logged-in user
