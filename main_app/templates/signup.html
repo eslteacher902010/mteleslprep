@@ -5,18 +5,18 @@
 {% endblock %} 
 {% block content %}
 <div class="page-header justify-center mt-20 py-30 text-mono text-lg font-semibold text-white">
-  <h1>Sign Up</h1>
-  <img src="{% static 'images/sun.png' %}" height="50px" alt="A sun using a computer" />
+  <h1 class="text-white text-mono text-lg">Sign Up</h1>
+  <img src="{% static 'images/Sun.png' %}" height="50px" alt="sun"/>
 </div>
 {% if error_message %}
   <p class="red-text">{{ error_message }}</p>
 {% endif %}
 <form action="" method="post" class="form-container" autocomplete="off">
   {% csrf_token %}
-  <table>
+  <table class="text-white text-mono">
     {{ form.as_table }}
   </table>
-  <button type="submit" class="btn submit">Submit!</button>
+  <button class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded" type="submit">Submit!</button>
 </form>
 
 {% endblock %}
