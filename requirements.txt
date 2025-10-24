@@ -9,6 +9,7 @@ contourpy==1.3.2
 cycler==0.12.1
 deepl==1.22.0
 distlib==0.4.0
+dj-database-url==3.0.1
 Django==5.2.7
 dnspython==2.7.0
 email_validator==2.2.0
