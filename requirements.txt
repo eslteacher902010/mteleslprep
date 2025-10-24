@@ -39,6 +39,7 @@ pillow==11.2.1
 pipenv==2025.0.4
 platformdirs==4.4.0
 pluggy==1.6.0
+psycopg2-binary==2.9.11
 Pygments==2.19.2
 PyMuPDF==1.26.1
 pyparsing==3.2.3
