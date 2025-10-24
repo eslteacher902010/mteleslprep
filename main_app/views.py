@@ -225,6 +225,8 @@ def practice_test_detail(request, practice_id):
 class CreatePracticeTest(LoginRequiredMixin, CreateView):
     model = PracticeTest
     form_class = PracticeTestForm
+    template_name = 'main_app/practice/practice_form.html'
+
 
 
     def form_valid(self, form):
