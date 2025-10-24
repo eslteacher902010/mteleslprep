@@ -42,6 +42,4 @@ Django, Python, PostgreSQL, SQLite, HTML, CSS, Tailwind, Gunicorn, Whitenoise, H
 * Integrating progress visualization with charts and graphs
 * Need to fix scoring also.
 
----
 
-Would you like me to make a slightly shorter “portfolio version” next (2–3 paragraphs with a polished summary + skills section) that you could also use for LinkedIn or your GA showcase page?
