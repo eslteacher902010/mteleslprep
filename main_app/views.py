@@ -285,11 +285,9 @@ def take_practice_test(request, practice_test_id):
     if request.method == "GET":
         return render(request, 'main_app/practice/take_practice_test.html', {
         'practice_test': practice_test,
-        'questions': {
-            'mcq': mcq_questions,
-            'short': short_questions,
-            'long': long_questions,
-        }
+        'mcq_questions': mcq_questions,
+        'short_questions': short_questions,
+        'long_questions': long_questions,
     })
 
     form = PracticeTestForm(request.POST) 

@@ -25,6 +25,7 @@ ALLOWED_HOSTS = ["*"]  # ✅ allow all on Heroku
 # Application definition
 INSTALLED_APPS = [
     'main_app',
+    "widget_tweaks",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

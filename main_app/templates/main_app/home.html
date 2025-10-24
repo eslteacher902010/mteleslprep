@@ -19,7 +19,7 @@
 {% if user.is_authenticated %}
   <p class="font-sans text-2xl text-white">Welcome back, {{ user.username }}!</p>
 {% else %}
-  <a class="font-sans text-white" href="{% url 'login' %}" class="btn">Login</a>
+  <a class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded font-sans text-white" href="{% url 'login' %}" class="btn">Login</a>
 {% endif %}
 
 

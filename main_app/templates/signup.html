@@ -1,23 +1,33 @@
-{% extends 'base.html' %} 
-{% load static %} 
+{% extends 'base.html' %}
+{% load static %}
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/form.css' %}" />
-{% endblock %} 
-{% block content %}
-<div class="page-header justify-center mt-20 py-30 text-mono text-lg font-semibold text-white">
-  <h1 class="text-white text-mono text-lg">Sign Up</h1>
-  <img src="{% static 'images/Sun.png' %}" height="50px" alt="sun"/>
-</div>
-{% if error_message %}
-  <p class="red-text">{{ error_message }}</p>
-{% endif %}
-<form action="" method="post" class="form-container" autocomplete="off">
-  {% csrf_token %}
-  <table class="text-white text-mono">
-    {{ form.as_table }}
-  </table>
-  <button class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded" type="submit">Submit!</button>
-</form>
-
 {% endblock %}
 
+{% block content %}
+<div class="page-header justify-center mt-20 py-30 font-mono text-lg font-semibold text-white text-center">
+  <h1 class="text-white text-2xl">Sign Up</h1>
+  <img src="{% static 'images/Sun.png' %}" height="50px" alt="sun" class="mx-auto" />
+</div>
+
+{% if error_message %}
+  <p class="text-red-400 text-center">{{ error_message }}</p>
+{% endif %}
+
+<form action="" method="post" class="form-container mx-auto mt-6" autocomplete="off">
+  {% csrf_token %}
+  <table class="text-white font-mono">
+    {{ form.as_table }}
+  </table>
+  <button class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded mt-4" type="submit">
+    Submit!
+  </button>
+</form>
+
+<style>
+  input, select, textarea {
+    color: black !important;
+    background-color: white !important;
+  }
+</style>
+{% endblock %}
