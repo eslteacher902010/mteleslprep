@@ -276,6 +276,7 @@ def associate_question(request, practice_id, question_id, question_type):
 
     return redirect('practice-detail', pk=practice_id)
 
+#not finished
 @login_required
 def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
@@ -284,61 +285,50 @@ def take_practice_test(request, practice_test_id):
     short_questions = practice_test.short_answer_questions.all()
     long_questions = practice_test.long_answer_questions.all()
 
-
     if request.method == "GET":
         return render(request, 'main_app/practice/take_practice_test.html', {
-        'practice_test': practice_test,
-        'mcq_questions': mcq_questions,
-        'short_questions': short_questions,
-        'long_questions': long_questions,
-    })
+            'practice_test': practice_test,
+            'mcq_questions': mcq_questions,
+            'short_questions': short_questions,
+            'long_questions': long_questions,
+        })
 
-    form = PracticeTestForm(request.POST) 
-    if form.is_valid():
-        new_result = form.save(commit=False)
-        new_result.practice_test_id = practice_test_id  
-        new_result.user = request.user  
-        new_result.save()
-    
-        practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
-        score = 0
-        total = 0
+    score = 0
+    total = 0
 
-        test_questions = {
-            'mcq': practice_test.mcq_questions.all(),
-            'short': practice_test.short_answer_questions.all(),
-            'long': practice_test.long_answer_questions.all()
-        }
+    test_questions = {
+        'mcq': mcq_questions,
+        'short': short_questions,
+        'long': long_questions
+    }
 
-        for q_type, questions in test_questions.items():
-            for q in questions:
-                user_answer = request.POST.get(f'{q_type}_question_{q.id}', '').strip()
-                is_correct = False
+    for q_type, questions in test_questions.items():
+        for q in questions:
+            user_answer = request.POST.get(f'{q_type}_question_{q.id}', '').strip()
+            is_correct = False
 
-                if q_type == 'mcq':
-                    total += 1
-                    if user_answer.lower() == q.correct_answer.lower():
-                        score += 1
-                        is_correct = True
+            if q_type == 'mcq':
+                total += 1
+                if user_answer.lower() == q.correct_answer.lower():
+                    score += 1
+                    is_correct = True
 
-                UserResponse.objects.create(
-                    user=request.user,
-                    test=practice_test,
-                    question_type=q_type,
-                    question_id=q.id,
-                    question_text=q.prompt,
-                    user_answer=user_answer,
-                    is_correct=is_correct
-                )
+            UserResponse.objects.create(
+                user=request.user,
+                test=practice_test,
+                question_type=q_type,
+                question_id=q.id,
+                question_text=q.prompt,
+                user_answer=user_answer,
+                is_correct=is_correct
+            )
 
-        percentage = round((score / total * 100), 1) if total else 0
-
-        new_result.score = score
-        new_result.total = total
-        new_result.percentage = percentage
-        new_result.save()
+    percentage = round((score / total * 100), 1) if total else 0
+    practice_test.score = score
+    practice_test.save()
 
     return redirect('practice-results', practice_test_id=practice_test_id)
+
 
 
 @login_required

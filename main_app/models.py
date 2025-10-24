@@ -80,6 +80,7 @@ class PracticeTest(models.Model):
 class UserResponse(models.Model):
     test = models.ForeignKey(PracticeTest, on_delete=models.CASCADE, related_name="responses")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question_text = models.TextField()
     question_type = models.CharField(
         max_length=20,
         choices=[
