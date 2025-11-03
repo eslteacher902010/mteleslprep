@@ -30,6 +30,7 @@ from .models import (
     MultipleChoiceQuestion,
     PracticeTest,
     UserResponse,
+    UserAttempt
 )
 
 def home(request):
@@ -208,6 +209,8 @@ def associate_question(request, practice_id, question_id, question_type):
 def practice_test_detail(request, practice_id):
     # Get the selected PracticeTest
     practice_test = PracticeTest.objects.get(id=practice_id)
+    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
+    attempt_number = attempt_count + 1
 
     # Example: show only questions not yet associated (if applicable)
     mcq_questions = practice_test.mcq_questions.all()
@@ -219,6 +222,7 @@ def practice_test_detail(request, practice_id):
         'mcq_questions': mcq_questions,
         'short_questions': short_questions,
         'long_questions': long_questions,
+        'attempt_number': attempt_number
     })
 
 
@@ -259,28 +263,12 @@ class DeletePracticeTest(LoginRequiredMixin, DeleteView):
 
 
 
-def associate_question(request, practice_id, question_id, question_type):
-    practice = PracticeTest.objects.get(id=practice_id)
-    #collect all the practice test objects
-    if question_type =="short":
-        question = ShortAnswerQuestion.objects.get(id=question_id)
-        practice.short_answer_questions.add(question)
-
-    elif question_type=="long":
-        question = LongAnswerQuestion.objects.get(id=question_id)
-        practice.long_answer_questions.add(question)
-    elif question_type=="mcq":
-        question = MultipleChoiceQuestion.objects.get(id=question_id)
-        practice.mcq_questions.add(question)
-
-
-    return redirect('practice-detail', pk=practice_id)
-
 #not finished
 @login_required
 def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
 
+    attempt = UserAttempt.objects.create(user=request.user, test=practice_test)
     mcq_questions = practice_test.mcq_questions.all()
     short_questions = practice_test.short_answer_questions.all()
     long_questions = practice_test.long_answer_questions.all()
@@ -320,12 +308,13 @@ def take_practice_test(request, practice_test_id):
                 question_id=q.id,
                 question_text=q.prompt,
                 user_answer=user_answer,
-                is_correct=is_correct
+                is_correct=is_correct,
+                attempt=attempt,
             )
 
     percentage = round((score / total * 100), 1) if total else 0
-    practice_test.score = score
-    practice_test.save()
+    attempt.score = score
+    attempt.save()
 
     return redirect('practice-results', practice_test_id=practice_test_id)
 
@@ -336,6 +325,7 @@ def practice_results(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
     responses = UserResponse.objects.filter(test=practice_test, user=request.user)
 
+   
     score = responses.filter(is_correct=True).count()
     total = responses.filter(question_type='mcq').count()
     percentage = round((score / total * 100), 1) if total else 0

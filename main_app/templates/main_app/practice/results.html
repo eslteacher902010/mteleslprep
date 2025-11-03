@@ -3,7 +3,7 @@
 
 {% block content %}
 <main class="mt-28 px-10">
-  <div class="max-w-4xl mx-auto bg-white/90 rounded-xl shadow-lg p-8 text-black mt-20 py-20 justify-center mt-20 py-30">
+  <div class="max-w-4xl mx-auto bg-white/90 rounded-xl shadow-lg p-8 text-white mt-20 py-20 justify-center mt-20 py-30">
     <h1 class="text-3xl font-bold text-center mb-6">
       Results for: {{ practice_test.title }}
     </h1>
@@ -50,13 +50,13 @@
       </ul>
     </section>
 
-    <div class="flex justify-center mt-8 gap-4">
+  <div class="btn-row font-mono text-lg font-semibold text-white">
       <a href="{% url 'practice-test-index' %}" 
-         class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+         class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
         Back to Tests
       </a>
       <a href="{% url 'practice-take' practice_test.id %}"
-         class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md">
+         class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
         Retake Test
       </a>
     </div>

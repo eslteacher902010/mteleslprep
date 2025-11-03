@@ -75,6 +75,16 @@ class PracticeTest(models.Model):
     def get_absolute_url(self):
         return reverse('practice-detail', kwargs={'pk': self.id})
 
+class UserAttempt(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    test = models.ForeignKey(PracticeTest, on_delete=models.CASCADE)
+    started_at = models.DateTimeField(auto_now_add=True)
+    score = models.FloatField(default=0)
+    attempt_number=models.IntegerField(default=0)
+ 
+    def __str__(self):
+        return f"{self.user.username} - {self.test.title} (Attempt {self.attempt_number})"
+
 
 # Individual user responses
 class UserResponse(models.Model):
@@ -92,6 +102,9 @@ class UserResponse(models.Model):
     question_id = models.PositiveIntegerField()  # the specific question’s ID
     user_answer = models.TextField(blank=True, null=True)
     is_correct = models.BooleanField(default=False)
+    attempt = models.ForeignKey(UserAttempt, on_delete=models.CASCADE, null=True, blank=True)
+
 
     def __str__(self):
-        return f"Response by {self.test.user.username} ({self.question_type})"
+        return f"Response by {self.user.username} ({self.question_type})"
+

@@ -60,12 +60,12 @@
     <a href="{% url 'practice-test-delete' practice_test.id %}" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded">Delete</a>
     <a href="{% url 'practice-test-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Tests</a>
      <a href="{% url 'practice-take' practice_test.id %}"
-      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+      class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">
       Take Test
     </a>
     {% else %}
     <a href="{% url 'practice-take' practice_test.id %}"
-      class="bg-green-600 hover:bg-green-700 text-green text-3xl px-4 py-2 rounded-md">
+      class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">
       Take Test
     </a>
     <a href="{% url 'practice-test-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Tests</a>
