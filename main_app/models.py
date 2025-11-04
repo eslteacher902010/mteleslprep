@@ -38,12 +38,12 @@ class LongAnswerQuestion(models.Model):
 class MultipleChoiceQuestion(models.Model):
     prompt = models.TextField()
     question_type="mcq"
-    option_a = models.CharField(max_length=255)
-    option_b = models.CharField(max_length=255)
-    option_c = models.CharField(max_length=255)
-    option_d = models.CharField(max_length=255)
+    option_a = models.TextField(max_length=255)
+    option_b = models.TextField(max_length=255)
+    option_c = models.TextField(max_length=255)
+    option_d = models.TextField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    correct_answer = models.CharField(max_length=1, choices=[
+    correct_answer = models.TextField(max_length=1, choices=[
         ('A', 'A'),
         ('B', 'B'),
         ('C', 'C'),
