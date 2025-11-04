@@ -103,6 +103,8 @@ class UserResponse(models.Model):
     user_answer = models.TextField(blank=True, null=True)
     is_correct = models.BooleanField(default=False)
     attempt = models.ForeignKey(UserAttempt, on_delete=models.CASCADE, null=True, blank=True)
+    correct_answer = models.CharField(max_length=255, blank=True, null=True)
+
 
 
     def __str__(self):

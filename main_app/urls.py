@@ -51,6 +51,10 @@ urlpatterns = [
     path('practice-tests/<int:practice_id>/delete/', views.DeletePracticeTest.as_view(), name='practice-test-delete'),
     path('practice-tests/<int:practice_test_id>/take/', views.take_practice_test, name='practice-take'),
     path('practice-tests/<int:practice_test_id>/results/', views.practice_results, name='practice-results'),
+    path('practice/<int:test_id>/next/<int:q_num>/', views.next_question, name='next_question'),
+    path('practice/check_answer/<int:question_id>/', views.check_answer, name='check-answer')
+
+
 
 
 

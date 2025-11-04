@@ -1,5 +1,6 @@
 from urllib import request
 from django.shortcuts import redirect, render, get_object_or_404
+from django.http import JsonResponse
 
 
 from django.views.generic.edit import CreateView
@@ -68,7 +69,6 @@ def signup(request):
     context = {'form': form, 'error_message': error_message}
     return render(request, 'signup.html', context)
   
-
 
 def question_index(request):
     short_questions = ShortAnswerQuestion.objects.all()
@@ -209,8 +209,7 @@ def associate_question(request, practice_id, question_id, question_type):
 def practice_test_detail(request, practice_id):
     # Get the selected PracticeTest
     practice_test = PracticeTest.objects.get(id=practice_id)
-    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
-    attempt_number = attempt_count + 1
+
 
     # Example: show only questions not yet associated (if applicable)
     mcq_questions = practice_test.mcq_questions.all()
@@ -222,7 +221,6 @@ def practice_test_detail(request, practice_id):
         'mcq_questions': mcq_questions,
         'short_questions': short_questions,
         'long_questions': long_questions,
-        'attempt_number': attempt_number
     })
 
 
@@ -268,10 +266,19 @@ class DeletePracticeTest(LoginRequiredMixin, DeleteView):
 def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
 
-    attempt = UserAttempt.objects.create(user=request.user, test=practice_test)
+    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
+    attempt_number = attempt_count + 1
+
+    attempt = UserAttempt.objects.create(user=request.user, test=practice_test, attempt_number=attempt_number)
+
     mcq_questions = practice_test.mcq_questions.all()
     short_questions = practice_test.short_answer_questions.all()
     long_questions = practice_test.long_answer_questions.all()
+    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
+    attempt_number = attempt_count + 1
+    mcq_count = mcq_questions.count()
+    short_count = short_questions.count()
+    long_count = long_questions.count()
 
     if request.method == "GET":
         return render(request, 'main_app/practice/take_practice_test.html', {
@@ -279,6 +286,10 @@ def take_practice_test(request, practice_test_id):
             'mcq_questions': mcq_questions,
             'short_questions': short_questions,
             'long_questions': long_questions,
+            'attempt_number': attempt_number,
+            'mcq_count': mcq_count,
+            'short_count': short_count,
+            'long_count': long_count,
         })
 
     score = 0
@@ -310,6 +321,7 @@ def take_practice_test(request, practice_test_id):
                 user_answer=user_answer,
                 is_correct=is_correct,
                 attempt=attempt,
+                correct_answer=getattr(q, "correct_answer", ""),
             )
 
     percentage = round((score / total * 100), 1) if total else 0
@@ -317,6 +329,7 @@ def take_practice_test(request, practice_test_id):
     attempt.save()
 
     return redirect('practice-results', practice_test_id=practice_test_id)
+
 
 
 
@@ -330,16 +343,79 @@ def practice_results(request, practice_test_id):
     total = responses.filter(question_type='mcq').count()
     percentage = round((score / total * 100), 1) if total else 0
 
+    latest_attempt= (
+        UserAttempt.objects.filter(user=request.user, test=practice_test)
+        .order_by('-started_at')
+        .first()
+    )
+    responses = UserResponse.objects.filter(attempt=latest_attempt)
+
+
     return render(request, "main_app/practice/results.html", {
         "practice_test": practice_test,
         "responses": responses,
         "score": score,
         "total": total,
-        "percentage": percentage
+        "percentage": percentage,
+        "latest_attempt":latest_attempt,
     })
 
 
+def next_question(request, test_id, q_num):
+    #fetch practice test 
+    practice_test = get_object_or_404(PracticeTest, id=test_id)
+    
+    if request.method == 'POST':
+        question_id = request.POST.get('question_id')
+        selected_choice = request.POST.get('answer')
+
+        if question_id and selected_choice:
+            UserResponse.objects.create(
+                user=request.user,
+                test=practice_test,
+                question_id=question_id,
+                user_answer=selected_choice,
+            )
+
+    all_questions = (
+        list(practice_test.mcq_questions.all()) +
+        list(practice_test.short_answer_questions.all()) +
+        list(practice_test.long_answer_questions.all())
+    )
+
+    total = len(all_questions)
+    
+    if q_num > total:
+        return JsonResponse({'done': True})
+
+    question = all_questions[q_num - 1] #Current questions
+
+    data = {
+        'done': False,
+        'q_num': q_num,
+        'total': total,
+        'question': {
+            'id': question.id,
+            'prompt': question.prompt,
+            'type': question.__class__.__name__,
+        }
+    }
+
+    if hasattr(question, 'option_a'):
+        data['question']['choices'] = [
+            {'label': 'A', 'text': question.option_a},
+            {'label': 'B', 'text': question.option_b},
+            {'label': 'C', 'text': question.option_c},
+            {'label': 'D', 'text': question.option_d},
+        ]
+
+    return JsonResponse(data)
 
 
 
-
+@login_required
+def check_answer(request, question_id):
+    question= get_object_or_404(MultipleChoiceQuestion, id=question_id)
+    selected = request.GET.get('choice')
+    correct= selected.lower() == question.correct_answer.lower()
+    return JsonResponse({'correct': correct})

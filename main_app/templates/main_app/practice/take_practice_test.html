@@ -13,51 +13,114 @@
     {% csrf_token %}
 
     <!-- Multiple Choice -->
+     {%if mcq_questions.exists %}
     <h2 class="text-lg font-bold mt-8 text-white">Multiple Choice</h2>
     {% for mcq in mcq_questions %}
-      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white text-mono text-white">
+     <div id="question-{{forloop.counter}}" class="question hidden border border-gray-300 p-4 mb-4 rounded-md bg-white text-mono text-white">
+
         <p class="font-medium text-white text-mono font-semibold">{{ mcq.prompt }}</p>
 
-        <label class="text-mono text-white"><input type="radio" name="mcq_question_{{ mcq.id }}" value="A"> {{ mcq.option_a }}</label><br>
-        <label class="text-mono text-white"><input type="radio" name="mcq_question_{{ mcq.id }}" value="B"> {{ mcq.option_b }}</label><br>
-        <label class="text-mono text-white"><input type="radio" name="mcq_question_{{ mcq.id }}" value="C"> {{ mcq.option_c }}</label><br>
-        <label class="text-mono text-white"><input type="radio" name="mcq_question_{{ mcq.id }}" value="D"> {{ mcq.option_d }}</label>
+        <ul class="space-y-2 pl-4">
+            <li><label><strong>A.</strong> <input type="radio" name="mcq_question_{{ mcq.id }}" value="A"> {{ mcq.option_a }}</label></li>
+            <li><label><strong>B.</strong> <input type="radio" name="mcq_question_{{ mcq.id }}" value="B"> {{ mcq.option_b }}</label></li>
+            <li><label><strong>C.</strong> <input type="radio" name="mcq_question_{{ mcq.id }}" value="C"> {{ mcq.option_c }}</label></li>
+            <li><label><strong>D.</strong> <input type="radio" name="mcq_question_{{ mcq.id }}" value="D"> {{ mcq.option_d }}</label></li>
+          </ul>
+
       </div>
-    {% empty %}
-      <p>No multiple choice questions.</p>
     {% endfor %}
+    {% endif %}
+    
 
     <!-- Short Answer -->
+     {% if short_questions.exists %}
     <h2 class="text-lg font-bold mt-8 text-white">Short Answer</h2>
     {% for short in short_questions %}
-      <div class="border border-gray-300 p-4 mb-4 rounded-md bg-white text-white text-mono">
+      <div id="question-{{ forloop.counter|add:mcq_count}}" class="question hidden border-gray-300 p-4 mb-4 rounded-md bg-white text-white text-mono">
         <p class="font-medium text-white text-mono font-semibold">{{ short.prompt }}</p>
-        <textarea name="short_question_{{ short.id }}" class="border rounded-md p-2 text-white w-full mt-2" rows="2"></textarea>
+        <textarea name="short_question_{{ short.id }}" class="border rounded-md p-2 text-black w-full mt-2" rows="2"></textarea>
       </div>
-    {% empty %}
-      <p>No short answer questions.</p>
     {% endfor %}
+    {% endif %}
 
     <!-- Long Answer -->
+     {% if long_questions.exists %}
     <h2 class="text-lg bg-slate-800 font-bold mt-8 text-white p-2 rounded-md text-mono text-white text-2xl">Long Answer</h2>
     {% for long in long_questions %}
-      <div class="border border-gray-300 bg-gray-200 p-4 mb-4 rounded-md text-black text-2xl">
+      <div id="question-{{ forloop.counter|add:mcq_count|add:short_count}}" class="question hidden border border-gray-300 bg-gray-200 p-4 mb-4 rounded-md text-black text-2xl">
         <p class="font-medium text-black mb-2">{{ long.prompt }}</p>
         <textarea 
           name="long_question_{{ long.id }}" 
-          class="border border-gray-400 rounded-md p-2 w-full mt-2 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-500"
+          class="border border-gray-400 rounded-md p-2 w-full mt-2 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-500 text-black"
           rows="4"></textarea>
       </div>
-    {% empty %}
-      <p class="text-gray-600">No long answer questions.</p>
     {% endfor %}
+    {% endif %}
 
-    <div class="flex justify-center mt-8">
-      <button type="submit"
-        class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md">
-        Submit answers
-      </button>
-    </div>
-  </form>
-</section>
+
+     <button class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md" type="button"  data-qnum="1" data-test="{{ practice_test.id }}" id="next">Next</button>
+
+ 
+
+
+
+<script>
+
+  function showItem(id) {
+  document.querySelectorAll('.question').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+  const nextButton = document.getElementById('next');
+
+  nextButton.addEventListener('click',async () => {
+    if (!nextButton) return;
+
+    const qNum= parseInt(nextButton.dataset.qnum)+1
+    const testId=nextButton.dataset.test
+
+    const res= await fetch(`/practice/${testId}/next/${qNum}/`);
+    const data= await res.json();
+
+    if(!data.done){
+      nextButton.dataset.qnum=data.q_num
+    }if(qNum<=data.total){
+      showItem(`question-${qNum}`);
+    }else{
+      nextButton.textContent="Submit Test";
+      nextButton.type="submit";
+    }
+  
+  });
+  showItem('question-1');
+</script>
+
+<script>
+  async function checkAnswer(questionId, selectedChoice) {
+    const response = await fetch(`/practice/check_answer/${questionId}/?choice=${selectedChoice}`);
+    const data = await response.json();
+    return data.correct;
+  }
+
+  document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', async (event) => {
+      const questionContainer = event.target.closest('.question');
+      const inputs = questionContainer.querySelectorAll('input[type="radio"]');
+      
+      // disable all radio buttons in this question
+      inputs.forEach(input => input.disabled = true); 
+
+      const questionId = event.target.name.split('_').pop();
+      const selectedChoice = event.target.value;
+      const isCorrect = await checkAnswer(questionId, selectedChoice);
+
+      const feedback = document.createElement('p');
+      feedback.classList.add('mt-2', 'font-semibold');
+      feedback.textContent = isCorrect ? 'Correct answer!' : '❌ Incorrect answer';
+      feedback.classList.add(isCorrect ? 'text-green-500' : 'text-red-500');
+      questionContainer.appendChild(feedback);
+    });
+  });
+</script>
+
 {% endblock %}
