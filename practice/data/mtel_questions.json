@@ -7,7 +7,7 @@
       "C": "Help students identify story elements and vocabulary",
       "D": "Help students understand conventional spelling"
     },
-    "correct": ""
+    "correct": "C"
   },
   {
     "prompt": "Concept - Language Acquisition. When ELL students hear phrases like 'It's raining cats and dogs' or 'This is just a drop in the bucket,' they may need specific instruction in:",
@@ -17,7 +17,7 @@
       "C": "Phonetic strategies",
       "D": "Scaffolding"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Reading Instruction. Some middle school ELL students are struggling with the current assignment on word order. The teacher explains again that there are certain rules in English that must be applied. She points out verb endings and other relevant information to one group more than once. Why might they be having such a hard time?",
@@ -27,7 +27,7 @@
       "C": "They are not intelligent students",
       "D": "They are having a conflict with the rules from their first language"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Social and Academic Language. Which of the following dialects does this sentence represent?",
@@ -37,7 +37,7 @@
       "C": "British English",
       "D": "Australian English"
     },
-    "correct": ""
+    "correct": "C"
   },
   {
     "prompt": "Concept - Factors Affecting ELLs. A third-grade classroom contains students from diverse backgrounds and varied skills. The teacher plans to have students contribute individually to a class book that features each student with a page for pictures and brief information about themselves. What is the best reason for selecting this instructional activity?",
@@ -47,7 +47,7 @@
       "C": "It demonstrates acceptance of diversity and its value in enriching students' learning",
       "D": "It provides a context for applying students' writing and organizational skills"
     },
-    "correct": ""
+    "correct": "C"
   },
   {
     "prompt": "Concept - Phonology and Morphology. Pragmatics is:",
@@ -57,7 +57,7 @@
       "C": "The smallest individual sound in a word",
       "D": "The study of language in its use"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Reading Skills. Which of the following statements about phonemic awareness is most accurate?",
@@ -67,7 +67,7 @@
       "C": "Students always develop phonemic awareness in a standard order applicable to all children",
       "D": "Phonemic awareness is an early indicator of students becoming strong readers"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Factors Affecting ELLs. A third-grade ELL student notices the focus on being a winner in a competition. He may be uncomfortable acting independently because in his culture, actions are based on:",
@@ -77,7 +77,7 @@
       "C": "Improving oneself",
       "D": "What is good for the whole"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Phonology and Morphology. A first-grade teacher designed a word wheel where only the beginning letter of the word changes when students spin the wheel. This activity best assesses which of the following?",
@@ -87,7 +87,7 @@
       "C": "Contextual analysis",
       "D": "Directionality"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "An ESL teacher is discussing English discourse with her students. Which of the following questions would be appropriate if the goal was to focus on discourse?",
@@ -97,7 +97,7 @@
       "C": "Are grammatical patterns different when the employee talks to his boss compared to when he talks to his friend?",
       "D": "What is the main idea of the passage?"
     },
-    "correct": ""
+    "correct": "C"
   },
   {
     "prompt": "Concept - Writing Instruction. Read the sentence below and answer the question: The basketball game went into double overtime. The underlined word can best be described as which of the following?",
@@ -107,7 +107,7 @@
       "C": "Simple subject",
       "D": "Simple predicate"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Basic Linguistic Concepts. Which words from the sentence constitute a prepositional phrase?",
@@ -117,7 +117,7 @@
       "C": "\"That your great grandfather\"",
       "D": "\"Is a treasured family work\""
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Instructional Approaches. In order to make speech a comprehensible input for students, the teacher of English Learners may:",
@@ -127,7 +127,7 @@
       "C": "Make gestures to clarify certain actions mentioned",
       "D": "Slow down the rate of delivery"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Reading Skills. Ms. Norma has prepared a content-based lesson for her ELL students. Before the lesson begins, she conducts a few exercises to familiarize students with new vocabulary. She presents the new vocabulary then has each student think of similar words in their primary language. This activity facilitates acquisition primarily because it:",
@@ -137,7 +137,7 @@
       "C": "Provides opportunities for feedback on misconceptions about English",
       "D": "Promotes meaningful interaction among students"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Writing Instruction. Which of the following is the best example of expository writing?",
@@ -147,7 +147,7 @@
       "C": "Poetry",
       "D": "A creative writing essay"
     },
-    "correct": ""
+    "correct": "A"
   },
   {
     "prompt": "Concept - Phonology and Morphology. The teacher reads a passage and asks students to listen for rhyming words, putting a finger on their nose when they hear a rhyme. This activity is used in assessing:",
@@ -157,7 +157,7 @@
       "C": "Vowel and consonant rules",
       "D": "Syntax"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Social and Academic Language. What is the primary reason teachers administer formative assessments?",
@@ -167,7 +167,7 @@
       "C": "Identifying mastered skills and skills needing development",
       "D": "Determining prior knowledge before starting a unit"
     },
-    "correct": ""
+    "correct": "C"
   },
   {
     "prompt": "Concept - Language Acquisition. Sooyong, a Korean student, recently joined Mr. Hanson's ESL class. He has an intermediate level of English but often switches the verb and object in sentences (e.g., 'I my homework forgot'). This is an example of:",
@@ -177,7 +177,7 @@
       "C": "Reverse syntax",
       "D": "Negative language transfer"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Factors Affecting ELLs. Which of the following interventions would be most beneficial for a visual learner struggling to differentiate between DNA and RNA?",
@@ -187,7 +187,7 @@
       "C": "Compose a song about DNA and RNA differences",
       "D": "Color and highlight DNA and RNA structures to show differences"
     },
-    "correct": ""
+    "correct": "B"
   },
   {
     "prompt": "Concept - Reading Instruction. Mr. Levitt overheard a teacher say that stages of second-language learning are much different than first-language learning. Which would be an appropriate response?",
@@ -197,7 +197,7 @@
       "C": "Second language acquisition differs due to cultural assimilation",
       "D": "The stages of first and second language acquisition are very similar"
     },
-    "correct": ""
+    "correct": "D"
   },
   {
     "prompt": "Concept - Basic Linguistic Concepts. Marta greets the mayor by saying, 'Hey Mayor, how are you doing?' The teacher explains this greeting is too casual. The teacher is explaining the concept of:",
@@ -207,6 +207,6 @@
       "C": "Language register",
       "D": "Cultural assimilation"
     },
-    "correct": ""
+    "correct": "C"
   }
 ]
