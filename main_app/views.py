@@ -1,3 +1,4 @@
+from django.contrib import messages
 from urllib import request
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import JsonResponse
@@ -205,7 +206,7 @@ def associate_question(request, practice_id, question_id, question_type):
     return redirect('practice-detail', pk=practice_id)
 
 
-@login_required
+# @login_required
 def practice_test_detail(request, practice_id):
     # Get the selected PracticeTest
     practice_test = PracticeTest.objects.get(id=practice_id)
@@ -261,25 +262,31 @@ class DeletePracticeTest(LoginRequiredMixin, DeleteView):
 
 
 
-#not finished
-@login_required
 def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
 
-    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
-    attempt_number = attempt_count + 1
-
-    attempt = UserAttempt.objects.create(user=request.user, test=practice_test, attempt_number=attempt_number)
+    # Track attempts only if logged in
+    if request.user.is_authenticated:
+        attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
+        attempt_number = attempt_count + 1
+        attempt = UserAttempt.objects.create(
+            user=request.user,
+            test=practice_test,
+            attempt_number=attempt_number
+        )
+    else:
+        attempt = None
+        attempt_number = 1  # default for guests
 
     mcq_questions = practice_test.mcq_questions.all()
     short_questions = practice_test.short_answer_questions.all()
     long_questions = practice_test.long_answer_questions.all()
-    attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
-    attempt_number = attempt_count + 1
+
     mcq_count = mcq_questions.count()
     short_count = short_questions.count()
     long_count = long_questions.count()
 
+    # ---- GET: show the test ----
     if request.method == "GET":
         return render(request, 'main_app/practice/take_practice_test.html', {
             'practice_test': practice_test,
@@ -292,6 +299,7 @@ def take_practice_test(request, practice_test_id):
             'long_count': long_count,
         })
 
+    # ---- POST: grade the test ----
     score = 0
     total = 0
 
@@ -312,22 +320,28 @@ def take_practice_test(request, practice_test_id):
                     score += 1
                     is_correct = True
 
-            UserResponse.objects.create(
-                user=request.user,
-                test=practice_test,
-                question_type=q_type,
-                question_id=q.id,
-                question_text=q.prompt,
-                user_answer=user_answer,
-                is_correct=is_correct,
-                attempt=attempt,
-                correct_answer=getattr(q, "correct_answer", ""),
-            )
+            # ✅ Save responses only for logged-in users
+            if request.user.is_authenticated:
+                UserResponse.objects.create(
+                    user=request.user,
+                    test=practice_test,
+                    question_type=q_type,
+                    question_id=q.id,
+                    question_text=q.prompt,
+                    user_answer=user_answer,
+                    is_correct=is_correct,
+                    attempt=attempt,
+                    correct_answer=getattr(q, "correct_answer", ""),
+                )
+
+    #  Save attempt only for logged-in users
+    if request.user.is_authenticated and attempt:
+        attempt.score = score
+        attempt.save()
 
     percentage = round((score / total * 100), 1) if total else 0
-    attempt.score = score
-    attempt.save()
 
+    # Guests still see the results page
     return redirect('practice-results', practice_test_id=practice_test_id)
 
 
@@ -413,7 +427,6 @@ def next_question(request, test_id, q_num):
 
 
 
-@login_required
 def check_answer(request, question_id):
     question = get_object_or_404(MultipleChoiceQuestion, id=question_id)
     selected = request.GET.get('choice', '').strip()

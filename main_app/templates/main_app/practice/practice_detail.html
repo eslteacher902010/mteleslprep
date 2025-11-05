@@ -55,9 +55,12 @@
 
   <div class="btn-row font-mono text-lg font-semibold text-white">
 
+    
+    {% if user.is_authenticated %}
     {% if user == practice_test.user %}
     <a href="{% url 'practice-test-update' practice_test.id %}" class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">Edit</a>
     <a href="{% url 'practice-test-delete' practice_test.id %}" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded">Delete</a>
+    {% endif %}
     <a href="{% url 'practice-test-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Tests</a>
      <a href="{% url 'practice-take' practice_test.id %}"
       class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">

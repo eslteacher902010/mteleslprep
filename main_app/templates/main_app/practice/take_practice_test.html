@@ -16,9 +16,10 @@
      {%if mcq_questions.exists %}
     <h2 class="text-lg font-bold mt-8 text-white">Multiple Choice</h2>
     {% for mcq in mcq_questions %}
-     <div id="question-{{forloop.counter}}" class="question hidden border border-gray-300 p-4 mb-4 rounded-md bg-white text-mono text-white">
+     <div id="question-{{forloop.counter}}" class="question mcq-question hidden border border-gray-300 p-4 mb-4 rounded-md bg-black text-mono text-black">
 
-        <p class="font-medium text-white text-mono font-semibold">{{ mcq.prompt }}</p>
+
+        <p class="font-medium text-black text-mono font-semibold">{{ mcq.prompt }}</p>
 
         <ul class="space-y-2 pl-4">
             <li><label><strong>A.</strong> <input type="radio" name="mcq_question_{{ mcq.id }}" value="A"> {{ mcq.option_a }}</label></li>
@@ -61,6 +62,10 @@
      <button class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md" type="button"  data-qnum="1" data-test="{{ practice_test.id }}" id="next">Next</button>
 
  
+<script>
+  const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+</script>
+
 
 
 
@@ -80,6 +85,7 @@
     const testId=nextButton.dataset.test
 
     const res= await fetch(`/practice/${testId}/next/${qNum}/`);
+    console.log("Fetching next question:", res.url, res.status);
     const data= await res.json();
 
     if(!data.done){
@@ -87,8 +93,13 @@
     }if(qNum<=data.total){
       showItem(`question-${qNum}`);
     }else{
+      {% if user.is_authenticated %}
       nextButton.textContent="Submit Test";
       nextButton.type="submit";
+      {% else %}
+      alert("Please log in to submit your test.");
+      window.location.href = "{% url 'login' %}";
+      {% endif %}
     }
   
   });
@@ -104,34 +115,85 @@
   }
 
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
-    radio.addEventListener('change', async (event) => {
-      const questionContainer = event.target.closest('.question');
-      const inputs = questionContainer.querySelectorAll('input[type="radio"]');
+  radio.addEventListener('change', async (event) => {
+    const questionContainer = event.target.closest('.question');
+    const inputs = questionContainer.querySelectorAll('input[type="radio"]');
 
-      // disable all radios in this question
-      inputs.forEach(input => input.disabled = true);
+    // disable all radios in this question
+    inputs.forEach(input => input.disabled = true);
 
-      const questionId = event.target.name.split('_').pop();
-      const selectedChoice = event.target.value;
+    const questionId = event.target.name.split('_').pop();
+    const selectedChoice = event.target.value;
 
-      const data = await checkAnswer(questionId, selectedChoice);
+    const data = await checkAnswer(questionId, selectedChoice);
 
-      const feedback = document.createElement('p');
-      feedback.classList.add('mt-2', 'font-semibold');
+    const labels = questionContainer.querySelectorAll('label');
 
-      if (data.is_correct) {
-        feedback.textContent = '✅ Correct answer!';
-        feedback.classList.add('text-green-500');
-      } else {
-        feedback.innerHTML = `❌ Incorrect answer. The correct answer is <b>${data.correct_label}. ${data.correct_text}</b>`;
-        feedback.classList.add('text-red-500');
-      }
-
-      questionContainer.appendChild(feedback);
+    const correctLabel = [...labels].find(l => {
+      const input = l.querySelector('input');
+      return input && input.value === data.correct_label;
     });
+
+    const selectedLabel = [...labels].find(l => {
+      const input = l.querySelector('input');
+      return input && input.value === selectedChoice;
+    });
+
+    // clear previous highlights
+    labels.forEach(label => label.classList.remove('correct-answer', 'wrong-answer'));
+
+    if (data.is_correct) {
+      if (correctLabel) correctLabel.classList.add('correct-answer');
+    } else {
+      if (selectedLabel) selectedLabel.classList.add('wrong-answer');
+      if (correctLabel) correctLabel.classList.add('correct-answer');
+    }
+
+    const feedback = document.createElement('p');
+    feedback.classList.add('mt-2', 'font-semibold');
+
+    if (data.is_correct) {
+      feedback.innerHTML = `<img src="{% static 'images/2714_color.png' %}" 
+  alt="Correct" class="feedback-icon inline w-3 h-3 mr-1 align-middle"> Correct answer!`;
+      feedback.classList.add('text-green-500');
+    } else {
+      feedback.innerHTML = `<img src="{% static 'images/274C_color.png' %}" 
+  alt="Incorrect" class="feedback-icon inline w-3 h-3 mr-1 align-middle"> 
+  Incorrect answer. The correct answer is <b>${data.correct_label}. ${data.correct_text}</b>`;
+      feedback.classList.add('text-red-500');
+    }
+
+    questionContainer.appendChild(feedback);
   });
+});
+
 </script>
 
+<style>
+  .correct-answer {
+  background-color: #22c55e33; /* soft green tint */
+  border-radius: 6px;
+  padding: 4px;
+}
 
+.wrong-answer {
+  background-color: #ef444433; /* soft red tint */
+  border-radius: 6px;
+  padding: 4px;
+}
 
-{% endblock %}
+img.feedback-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.mcq-question {
+  background-color: #e8f9fd;
+  color: black;
+  border-color: #444;
+}
+
+</style>
+
+  {% endblock %}
