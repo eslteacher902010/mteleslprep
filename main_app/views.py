@@ -38,9 +38,9 @@ def home(request):
     return render(request, 'main_app/home.html')
 
 
-# class CustomLoginView(LoginView):
-#     template_name = 'login.html'
-#     redirect_authenticated_user = True
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True
 
 def about(request):
     return render(request, 'main_app/about.html')

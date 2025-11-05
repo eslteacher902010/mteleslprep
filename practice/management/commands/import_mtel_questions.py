@@ -1,28 +1,28 @@
+import json
 from django.core.management.base import BaseCommand
 from main_app.models import MultipleChoiceQuestion
-import json
-import os
 
 class Command(BaseCommand):
-    help = "Import MTEL multiple choice questions from JSON"
+    help = "Import clean MTEL questions"
 
     def handle(self, *args, **kwargs):
-        path = os.path.join("practice", "data", "mtel_questions.json")
-
+        path = "practice/data/mtel_questions.json"
         with open(path, "r") as f:
-            questions = json.load(f)
+            data = json.load(f)
 
-        created = 0
-        for q in questions:
+        count = 0
+        for item in data:
+            prompt = item["prompt"].split("Option")[0].strip()
+            choices = item["choices"]
+
             MultipleChoiceQuestion.objects.create(
-    prompt=q["prompt"],
-    option_a=q["choices"]["A"],
-    option_b=q["choices"]["B"],
-    option_c=q["choices"]["C"],
-    option_d=q["choices"]["D"],
-    correct_answer=q["correct"],  # your model uses this name
-)
+                prompt=prompt[:2000],
+                option_a=choices.get("A", "")[:255],
+                option_b=choices.get("B", "")[:255],
+                option_c=choices.get("C", "")[:255],
+                option_d=choices.get("D", "")[:255],
+                correct_answer=item.get("correct", "").strip()[:1]
+            )
+            count += 1
 
-            created += 1
-
-        self.stdout.write(self.style.SUCCESS(f"✅ Imported {created} MTEL questions!"))
+        self.stdout.write(self.style.SUCCESS(f"✅ Imported {count} clean questions."))

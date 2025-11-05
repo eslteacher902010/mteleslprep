@@ -99,6 +99,7 @@
   async function checkAnswer(questionId, selectedChoice) {
     const response = await fetch(`/practice/check_answer/${questionId}/?choice=${selectedChoice}`);
     const data = await response.json();
+    console.log("check_answer returned:", data); // 👀 debug line
     return data; // return the full response object
   }
 

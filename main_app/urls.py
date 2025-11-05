@@ -8,6 +8,7 @@ urlpatterns = [
     path('addq/', views.add_question, name='add-question'),
     path('accounts/signup/', views.signup, name='signup'),
     # path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     
 
     # All questions 
