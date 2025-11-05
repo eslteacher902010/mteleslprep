@@ -415,7 +415,28 @@ def next_question(request, test_id, q_num):
 
 @login_required
 def check_answer(request, question_id):
-    question= get_object_or_404(MultipleChoiceQuestion, id=question_id)
-    selected = request.GET.get('choice')
-    correct= selected.lower() == question.correct_answer.lower()
-    return JsonResponse({'correct': correct})
+    question = get_object_or_404(MultipleChoiceQuestion, id=question_id)
+    selected = request.GET.get('choice', '').strip()
+
+    # Handle case-insensitive comparison safely
+    correct_answer = (question.correct_answer or "").strip().lower()
+    is_correct = selected.lower() == correct_answer if selected else False
+
+    # Handle missing or blank correct answer gracefully
+    correct_label = (question.correct_answer or "?").upper()
+    correct_text = ""
+    if correct_label == "A":
+        correct_text = question.option_a
+    elif correct_label == "B":
+        correct_text = question.option_b
+    elif correct_label == "C":
+        correct_text = question.option_c
+    elif correct_label == "D":
+        correct_text = question.option_d
+
+    return JsonResponse({
+        "is_correct": is_correct,
+        "correct_label": correct_label,
+        "correct_text": correct_text or "Not specified",
+    })
+
