@@ -30,7 +30,7 @@
     "correct": "D"
   },
   {
-    "prompt": "Concept - Social and Academic Language. Which of the following dialects does this sentence represent?",
+    "prompt": "Concept - Social and Academic Language. Which of the following dialects does this sentence represent?\n    \"I can't believe you've got to go to the store again!\"",
     "choices": {
       "A": "Southern American",
       "B": "Northern American",
