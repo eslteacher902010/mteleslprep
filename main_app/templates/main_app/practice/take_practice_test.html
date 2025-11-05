@@ -99,7 +99,7 @@
   async function checkAnswer(questionId, selectedChoice) {
     const response = await fetch(`/practice/check_answer/${questionId}/?choice=${selectedChoice}`);
     const data = await response.json();
-    return data; // Return the full object, not just 'correct'
+    return data; // return the full response object
   }
 
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
@@ -107,21 +107,22 @@
       const questionContainer = event.target.closest('.question');
       const inputs = questionContainer.querySelectorAll('input[type="radio"]');
 
-      // Disable all radio buttons in this question
+      // disable all radios in this question
       inputs.forEach(input => input.disabled = true);
 
       const questionId = event.target.name.split('_').pop();
       const selectedChoice = event.target.value;
-      const data = await checkAnswer(questionId, selectedChoice);  // Now we get all data
+
+      const data = await checkAnswer(questionId, selectedChoice);
 
       const feedback = document.createElement('p');
       feedback.classList.add('mt-2', 'font-semibold');
 
       if (data.is_correct) {
-        feedback.textContent = '✅ Correct!';
+        feedback.textContent = '✅ Correct answer!';
         feedback.classList.add('text-green-500');
       } else {
-        feedback.innerHTML = `❌ Incorrect. The correct answer is <b>${data.correct_label}. ${data.correct_text}</b>`;
+        feedback.innerHTML = `❌ Incorrect answer. The correct answer is <b>${data.correct_label}. ${data.correct_text}</b>`;
         feedback.classList.add('text-red-500');
       }
 
@@ -129,6 +130,7 @@
     });
   });
 </script>
+
 
 
 {% endblock %}
