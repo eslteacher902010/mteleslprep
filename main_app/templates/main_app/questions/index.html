@@ -3,41 +3,72 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'css/questions/index.css' %}">
+<style>
+  .question-header {
+    cursor: pointer;
+    color: #2563eb; /* Tailwind blue-600 */
+  }
+  .question-header:hover {
+    text-decoration: underline;
+  }
+  .answer-section {
+    display: none !important; /* ensure it's hidden on load */
+    margin-top: 0.5rem;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
-<section class="questions justify-center mt-20 py-30 text-mono justify-center mt-20 py-30 text-white">
+<section class="questions justify-center mt-20 py-30 text-mono text-white" style="cursor: pointer;">
   <div class="subsection-title">
-    <h2 class="text-2xl text-mono">All Questions</h2>
+    <h2 class="text-2xl text-mono text-white">All Questions--Here you can click to see a question-Take a test to see the answers</h2>
   </div>
 
   <div class="subsection-content">
     {% for question in all_questions %}
-      <div class="question-container border p-4 my-3 rounded bg-white shadow">
-        <p><strong>{{ question.prompt }}</strong></p>
+      <div class="question-container border p-4 my-3 rounded shadow text-white">
+        <p class="question-header text-lg font-bold mb-2">
+          {{ forloop.counter }}. {{ question.prompt }}
+        </p>
 
-        {% if question.question_type == "mcq" %}
-          <ul>
-            <li>A. {{ question.option_a }}</li>
-            <li>B. {{ question.option_b }}</li>
-            <li>C. {{ question.option_c }}</li>
-            <li>D. {{ question.option_d }}</li>
-          </ul>
+        <div class="answer-section">
+          {% if question.question_type == "mcq" %}
+            <p>Created by: {{ question.user.username }}</p>
+            <ul class="ml-4 list-disc">
+              <li>A. {{ question.option_a }}</li>
+              <li>B. {{ question.option_b }}</li>
+              <li>C. {{ question.option_c }}</li>
+              <li>D. {{ question.option_d }}</li>
+            </ul>
 
-        {% elif question.question_type == "short" %}
-          <p><em>Correct answer:</em> {{ question.correct_answer }}</p>
+          {% elif question.question_type == "short" %}
+            <p><em>Answer:</em> {{ question.correct_answer }}</p>
 
-        {% elif question.question_type == "long" %}
-          {% if question.sample_answer %}
-            <p><em>Sample answer:</em> {{ question.sample_answer }}</p>
-          {% else %}
-            <p><em>No sample answer provided.</em></p>
+          {% elif question.question_type == "long" %}
+            <p><em>Long answer type question — awaiting response.</em></p>
           {% endif %}
-        {% endif %}
+        </div>
       </div>
     {% empty %}
       <p>No questions found.</p>
     {% endfor %}
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Ensure all answer sections are closed on load
+  document.querySelectorAll('.answer-section').forEach(ans => ans.style.display = 'none');
+
+  // Add toggle functionality
+  document.querySelectorAll('.question-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const answer = header.nextElementSibling;
+      answer.style.display = (answer.style.display === 'none' || !answer.style.display)
+        ? 'block'
+        : 'none';
+    });
+  });
+});
+</script>
 {% endblock %}

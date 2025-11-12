@@ -6,7 +6,9 @@
 {% endblock %} 
 
 {% block content %}
-<div class="page-header font-mono text-lg font-semibold">
+<div class="page-header font-mono text-lg font-semibold justify-center mt-20 py-30">
+  {% comment %} Check if we are editing an existing question or adding a new one {% endcomment %}
+  {% comment %} 'question' context variable should be provided by the view {% endcomment %}
   {% if question %}
     <h1>Edit Question: {{ question.prompt }}</h1>
   {% else %}

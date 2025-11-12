@@ -2,7 +2,6 @@ from django import forms
 from .models import PracticeTest, ShortAnswerQuestion, LongAnswerQuestion, MultipleChoiceQuestion
 
 
-
 class ShortAnswerQuestionForm(forms.ModelForm):
     class Meta:
         model = ShortAnswerQuestion
@@ -11,6 +10,7 @@ class ShortAnswerQuestionForm(forms.ModelForm):
             'prompt': forms.Textarea(attrs={'rows': 3}),
             'correct_answer': forms.Textarea(attrs={'rows': 3}),
         }
+
 
 class LongAnswerQuestionForm(forms.ModelForm):
     class Meta:
@@ -21,10 +21,19 @@ class LongAnswerQuestionForm(forms.ModelForm):
             'sample_answer': forms.Textarea(attrs={'rows': 3}),
         }
 
+
 class MultipleChoiceQuestionForm(forms.ModelForm):
     class Meta:
         model = MultipleChoiceQuestion
-        fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+        fields = [
+            'prompt',
+            'option_a',
+            'option_b',
+            'option_c',
+            'option_d',
+            'correct_answer',
+            'explanation',
+        ]
         widgets = {
             'prompt': forms.Textarea(attrs={'rows': 3}),
             'option_a': forms.TextInput(),
@@ -32,6 +41,9 @@ class MultipleChoiceQuestionForm(forms.ModelForm):
             'option_c': forms.TextInput(),
             'option_d': forms.TextInput(),
             'correct_answer': forms.Select(),
+            'explanation': forms.Textarea(
+                attrs={'rows': 2, 'placeholder': 'Optional explanation or rationale...'}
+            ),
         }
 
 

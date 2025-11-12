@@ -18,10 +18,11 @@
   <h1>{{ question.prompt }}</h1>
   <p class="font-mono text-lg font-semibold"><strong>Answer:</strong> {{ question.correct_answer }}</p>
 
-  
+  {% if user.is_authenticated and user.mcq_question %}
   <div class="btn-row font-mono text-lg font-semibold text-white">
     <a href="{% url 'short-update' question.id %}" class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded">Edit</a>
     <a href="{% url 'short-delete' question.id %}" class="px-2 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded">Delete</a>
+    {% endif %}
     <a href="{% url 'short-index' %}" class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded">Back to Questions</a>
   </div>
 </div>

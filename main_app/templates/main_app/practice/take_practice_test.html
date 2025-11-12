@@ -159,7 +159,7 @@
     } else {
       feedback.innerHTML = `<img src="{% static 'images/274C_color.png' %}" 
   alt="Incorrect" class="feedback-icon inline w-3 h-3 mr-1 align-middle"> 
-  Incorrect answer. The correct answer is <b>${data.correct_label}. ${data.correct_text}</b>`;
+  Incorrect answer. The correct answer is <b>${data.correct_label}. ${data.explanation}</b>`;
       feedback.classList.add('text-red-500');
     }
 

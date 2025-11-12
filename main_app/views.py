@@ -1,3 +1,4 @@
+from modulefinder import test
 from django.contrib import messages
 from urllib import request
 from django.shortcuts import redirect, render, get_object_or_404
@@ -22,7 +23,7 @@ from datetime import date
 import random
 
 from main_app import forms 
-from .forms import PracticeTestForm
+from .forms import PracticeTestForm, ShortAnswerQuestionForm, LongAnswerQuestionForm, MultipleChoiceQuestionForm
 
 
 
@@ -112,10 +113,17 @@ class ShortAnswerQuestionUpdate(LoginRequiredMixin,UpdateView):
     fields = ['prompt', 'correct_answer'] 
     template_name = 'main_app/short/short_form.html'
 
+    def get_queryset(self):
+        return ShortAnswerQuestion.objects.filter(user=self.request.user)
+
 class ShortAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
     model = ShortAnswerQuestion
     success_url = '/questions/short/'
     template_name = 'main_app/question_confirm_delete.html'
+
+    def get_queryset(self):
+        return ShortAnswerQuestion.objects.filter(user=self.request.user)
+
 
 
 #long answer
@@ -144,11 +152,17 @@ class LongAnswerQuestionUpdate(LoginRequiredMixin, UpdateView):
     fields = ['prompt', 'sample_answer']
     template_name = 'main_app/long/long_form.html'
 
+    def get_queryset(self):
+        return LongAnswerQuestion.objects.filter(user=self.request.user)
+
 
 class LongAnswerQuestionDelete(LoginRequiredMixin, DeleteView):
     model = LongAnswerQuestion
     success_url = '/questions/long/'
     template_name = 'main_app/question_confirm_delete.html'
+
+    def get_queryset(self):
+        return LongAnswerQuestion.objects.filter(user=self.request.user)    
 
 
 #multiple choice
@@ -166,7 +180,7 @@ class MCQDetail(DetailView):
 
 class MultipleChoiceQuestionCreate(LoginRequiredMixin, CreateView):
     model = MultipleChoiceQuestion
-    fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+    form_class = MultipleChoiceQuestionForm 
     template_name = 'main_app/mcq/mcq_form.html'
 
     def form_valid(self, form): 
@@ -175,13 +189,19 @@ class MultipleChoiceQuestionCreate(LoginRequiredMixin, CreateView):
 
 class MultipleChoiceQuestionUpdate(LoginRequiredMixin, UpdateView):
     model = MultipleChoiceQuestion
-    fields = ['prompt', 'option_a', 'option_b', 'option_c', 'option_d', 'correct_answer']
+    form_class = MultipleChoiceQuestionForm
     template_name = 'main_app/mcq/mcq_form.html'
+
+    def get_queryset(self):
+        return MultipleChoiceQuestion.objects.filter(user=self.request.user)
 
 class MultipleChoiceQuestionDelete(LoginRequiredMixin, DeleteView):
     model = MultipleChoiceQuestion
     success_url = '/questions/mcq-questions/'
     template_name = 'main_app/question_confirm_delete.html'
+
+    def get_queryset(self):
+        return MultipleChoiceQuestion.objects.filter(user=self.request.user)
 
 
 # practice test views
@@ -207,9 +227,8 @@ def associate_question(request, practice_id, question_id, question_type):
 
 
 # @login_required
-def practice_test_detail(request, practice_id):
-    # Get the selected PracticeTest
-    practice_test = PracticeTest.objects.get(id=practice_id)
+def practice_test_detail(request, pk):
+    practice_test = PracticeTest.objects.get(id=pk)
 
 
     # Example: show only questions not yet associated (if applicable)
@@ -230,13 +249,27 @@ class CreatePracticeTest(LoginRequiredMixin, CreateView):
     form_class = PracticeTestForm
     template_name = 'main_app/practice/practice_form.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mcq_questions'] = MultipleChoiceQuestion.objects.filter(user=self.request.user)
+        context['short_questions'] = ShortAnswerQuestion.objects.filter(user=self.request.user)
+        context['long_questions'] = LongAnswerQuestion.objects.filter(user=self.request.user)
+        context['mcq_form'] = MultipleChoiceQuestionForm()
+        context['short_form'] = ShortAnswerQuestionForm()
+        context['long_form'] = LongAnswerQuestionForm()
 
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user  
+        return kwargs
 
     def form_valid(self, form):
-        # Assign the logged-in user
         form.instance.user = self.request.user
-        # Continue with the normal save/redirect process
         return super().form_valid(form)
+
+
 
 
 
@@ -451,5 +484,6 @@ def check_answer(request, question_id):
         "is_correct": is_correct,
         "correct_label": correct_label,
         "correct_text": correct_text or "Not specified",
+        'explanation': question.explanation or '',
     })
 

@@ -46,7 +46,7 @@ urlpatterns = [
 
     # Practice tests
     path('practice-tests/', views.PracticeTestList.as_view(), name='practice-test-index'),
-    path('practice-tests/<int:practice_id>/', views.practice_test_detail, name='practice-detail'),
+    path('practice-tests/<int:pk>/', views.practice_test_detail, name='practice-detail'),
     path('practice-tests/create/', views.CreatePracticeTest.as_view(), name='practice-test-create'),
     path('practice-tests/<int:pk>/update/', views.UpdatePracticeTest.as_view(), name='practice-test-update'),
     path('practice-tests/<int:pk>/delete/', views.DeletePracticeTest.as_view(), name='practice-test-delete'),

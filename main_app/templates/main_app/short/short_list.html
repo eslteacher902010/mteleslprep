@@ -23,7 +23,7 @@
 
     {% if user.is_authenticated %}
     <ul class="font-mono text-lg text-white">
-      <li><a href="{% url 'short-create' %}">Add a short answer question</a></li>
+      <li><a class="border border-white hover:underline text-xl" href="{% url 'short-create' %}">Add a short answer question</a></li>
     </ul>
   {% endif %}
 

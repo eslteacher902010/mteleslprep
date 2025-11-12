@@ -43,6 +43,7 @@ class MultipleChoiceQuestion(models.Model):
     option_c = models.TextField(max_length=255)
     option_d = models.TextField(max_length=255)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    explanation = models.TextField(blank=True, null=True) 
     correct_answer = models.TextField(max_length=1, choices=[
         ('A', 'A'),
         ('B', 'B'),
