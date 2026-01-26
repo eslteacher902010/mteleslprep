@@ -3,3 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* In your input.css */
+label.option-label.correct-highlight {
+    background-color: #dcfce7 !important;
+    border: 2px solid #22c55e !important;
+    color: #166534 !important;
+}
+
+label.option-label.wrong-highlight {
+    background-color: #fee2e2 !important;
+    border: 2px solid #ef4444 !important;
+    color: #991b1b !important;
+}

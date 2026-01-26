@@ -299,6 +299,8 @@ def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
 
     # Track attempts only if logged in
+    attempt = None
+    attempt_number = 1
     if request.user.is_authenticated:
         attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
         attempt_number = attempt_count + 1
@@ -307,76 +309,78 @@ def take_practice_test(request, practice_test_id):
             test=practice_test,
             attempt_number=attempt_number
         )
-    else:
-        attempt = None
-        attempt_number = 1  # default for guests
 
-    mcq_questions = practice_test.mcq_questions.all()
-    short_questions = practice_test.short_answer_questions.all()
-    long_questions = practice_test.long_answer_questions.all()
+    # 1. Fetch all questions
+    mcq_qs = practice_test.mcq_questions.all()
+    short_qs = practice_test.short_answer_questions.all()
+    long_qs = practice_test.long_answer_questions.all()
 
-    mcq_count = mcq_questions.count()
-    short_count = short_questions.count()
-    long_count = long_questions.count()
+    # 2. Combine into a single list for the template loop
+    # We convert querysets to lists to concatenate them easily
+    all_questions = list(mcq_qs) + list(short_qs) + list(long_qs)
+    total_questions = len(all_questions)
 
     # ---- GET: show the test ----
     if request.method == "GET":
         return render(request, 'main_app/practice/take_practice_test.html', {
             'practice_test': practice_test,
-            'mcq_questions': mcq_questions,
-            'short_questions': short_questions,
-            'long_questions': long_questions,
+            'all_questions': all_questions, # Use this single list in your HTML loop
+            'total_questions': total_questions,
             'attempt_number': attempt_number,
-            'mcq_count': mcq_count,
-            'short_count': short_count,
-            'long_count': long_count,
         })
 
     # ---- POST: grade the test ----
     score = 0
-    total = 0
+    total_mcqs = 0
 
-    test_questions = {
-        'mcq': mcq_questions,
-        'short': short_questions,
-        'long': long_questions
-    }
+    # Logic to process POST data
+    # ---- POST: grade the test ----
+    score = 0
+    total_mcqs = 0
 
-    for q_type, questions in test_questions.items():
-        for q in questions:
-            user_answer = request.POST.get(f'{q_type}_question_{q.id}', '').strip()
-            is_correct = False
+    for q in all_questions:
+        # Check all possible naming conventions from your HTML
+        # We check for mcq_question_ID, short_question_ID, etc.
+        user_answer = (
+            request.POST.get(f'mcq_question_{q.id}') or 
+            request.POST.get(f'short_question_{q.id}') or 
+            request.POST.get(f'long_question_{q.id}', '')
+        ).strip()
+        
+        # Use hasattr to check the specific model type
+        is_mcq = hasattr(q, 'option_a')
+        is_correct = False
 
-            if q_type == 'mcq':
-                total += 1
-                if user_answer.lower() == q.correct_answer.lower():
-                    score += 1
-                    is_correct = True
+        if is_mcq:
+            total_mcqs += 1
+            if user_answer.lower() == q.correct_answer.lower():
+                score += 1
+                is_correct = True
+        
+        # Logic for auto-grading short answer (optional)
+        elif hasattr(q, 'correct_answer'): # This is a ShortAnswerQuestion
+             if user_answer.lower() == q.correct_answer.lower():
+                is_correct = True
 
-            # ✅ Save responses only for logged-in users
-            if request.user.is_authenticated:
-                UserResponse.objects.create(
-                    user=request.user,
-                    test=practice_test,
-                    question_type=q_type,
-                    question_id=q.id,
-                    question_text=q.prompt,
-                    user_answer=user_answer,
-                    is_correct=is_correct,
-                    attempt=attempt,
-                    correct_answer=getattr(q, "correct_answer", ""),
-                )
+        if request.user.is_authenticated:
+            UserResponse.objects.create(
+                user=request.user,
+                test=practice_test,
+                question_type=getattr(q, 'question_type', 'unknown'),
+                question_id=q.id,
+                question_text=q.prompt,
+                user_answer=user_answer,
+                is_correct=is_correct,
+                attempt=attempt,
+                # Safe way to get correct answer regardless of model
+                correct_answer=getattr(q, "correct_answer", getattr(q, "sample_answer", "")),
+            )
 
-    #  Save attempt only for logged-in users
     if request.user.is_authenticated and attempt:
         attempt.score = score
         attempt.save()
 
-    percentage = round((score / total * 100), 1) if total else 0
-
-    # Guests still see the results page
     return redirect('practice-results', practice_test_id=practice_test_id)
-
 
 
 
@@ -461,29 +465,23 @@ def next_question(request, test_id, q_num):
 
 
 def check_answer(request, question_id):
-    question = get_object_or_404(MultipleChoiceQuestion, id=question_id)
-    selected = request.GET.get('choice', '').strip()
-
-    # Handle case-insensitive comparison safely
-    correct_answer = (question.correct_answer or "").strip().lower()
-    is_correct = selected.lower() == correct_answer if selected else False
-
-    # Handle missing or blank correct answer gracefully
-    correct_label = (question.correct_answer or "?").upper()
-    correct_text = ""
-    if correct_label == "A":
-        correct_text = question.option_a
-    elif correct_label == "B":
-        correct_text = question.option_b
-    elif correct_label == "C":
-        correct_text = question.option_c
-    elif correct_label == "D":
-        correct_text = question.option_d
-
+    # Get the type from the URL parameters
+    q_type = request.GET.get('type') 
+    
+    if q_type == 'mcq':
+        question = get_object_or_404(MultipleChoiceQuestion, id=question_id)
+        selected = request.GET.get('choice', '').strip().upper()
+        correct = question.correct_answer.upper()
+        return JsonResponse({
+            "is_correct": selected == correct,
+            "correct_answer": correct,
+            "explanation": question.explanation or "No explanation provided."
+        })
+    
+    # Handle Short/Long Answer separately
+    model = ShortAnswerQuestion if q_type == 'short' else LongAnswerQuestion
+    question = get_object_or_404(model, id=question_id)
     return JsonResponse({
-        "is_correct": is_correct,
-        "correct_label": correct_label,
-        "correct_text": correct_text or "Not specified",
-        'explanation': question.explanation or '',
+        "correct_answer": getattr(question, 'correct_answer', getattr(question, 'sample_answer', '')),
+        "explanation": "Compare your response to the sample provided."
     })
-
