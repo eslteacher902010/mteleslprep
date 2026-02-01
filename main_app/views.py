@@ -298,33 +298,21 @@ class DeletePracticeTest(LoginRequiredMixin, DeleteView):
 def take_practice_test(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
 
-    # Track attempts only if logged in
-    attempt = None
-    attempt_number = 1
-    if request.user.is_authenticated:
-        attempt_count = UserAttempt.objects.filter(user=request.user, test=practice_test).count()
-        attempt_number = attempt_count + 1
-        attempt = UserAttempt.objects.create(
-            user=request.user,
-            test=practice_test,
-            attempt_number=attempt_number
-        )
-
     # 1. Fetch all questions
-    mcq_qs = practice_test.mcq_questions.all()
-    short_qs = practice_test.short_answer_questions.all()
-    long_qs = practice_test.long_answer_questions.all()
-
-    # 2. Combine into a single list for the template loop
-    # We convert querysets to lists to concatenate them easily
-    all_questions = list(mcq_qs) + list(short_qs) + list(long_qs)
+    all_questions = list(practice_test.mcq_questions.all()) + \
+                    list(practice_test.short_answer_questions.all()) + \
+                    list(practice_test.long_answer_questions.all())
     total_questions = len(all_questions)
 
     # ---- GET: show the test ----
     if request.method == "GET":
+        attempt_number = 1
+        if request.user.is_authenticated:
+            attempt_number = UserAttempt.objects.filter(user=request.user, test=practice_test).count() + 1
+            
         return render(request, 'main_app/practice/take_practice_test.html', {
             'practice_test': practice_test,
-            'all_questions': all_questions, # Use this single list in your HTML loop
+            'all_questions': all_questions,
             'total_questions': total_questions,
             'attempt_number': attempt_number,
         })
@@ -332,22 +320,15 @@ def take_practice_test(request, practice_test_id):
     # ---- POST: grade the test ----
     score = 0
     total_mcqs = 0
-
-    # Logic to process POST data
-    # ---- POST: grade the test ----
-    score = 0
-    total_mcqs = 0
+    temp_results = [] # <--- NEW: To hold data for guest display
 
     for q in all_questions:
-        # Check all possible naming conventions from your HTML
-        # We check for mcq_question_ID, short_question_ID, etc.
         user_answer = (
             request.POST.get(f'mcq_question_{q.id}') or 
             request.POST.get(f'short_question_{q.id}') or 
             request.POST.get(f'long_question_{q.id}', '')
         ).strip()
         
-        # Use hasattr to check the specific model type
         is_mcq = hasattr(q, 'option_a')
         is_correct = False
 
@@ -356,51 +337,74 @@ def take_practice_test(request, practice_test_id):
             if user_answer.lower() == q.correct_answer.lower():
                 score += 1
                 is_correct = True
-        
-        # Logic for auto-grading short answer (optional)
-        elif hasattr(q, 'correct_answer'): # This is a ShortAnswerQuestion
+        elif hasattr(q, 'correct_answer'): 
              if user_answer.lower() == q.correct_answer.lower():
                 is_correct = True
 
-        if request.user.is_authenticated:
+        # Build a temporary response object for the template
+        temp_results.append({
+            'question_text': q.prompt,
+            'question_type': getattr(q, 'question_type', 'mcq'),
+            'user_answer': user_answer,
+            'is_correct': is_correct,
+            'correct_answer': getattr(q, "correct_answer", getattr(q, "sample_answer", "")),
+        })
+
+    # Calculate score percentage
+    final_percentage = (score / total_mcqs * 100) if total_mcqs > 0 else 0
+
+    # CASE A: Logged In - Save to DB and Redirect
+    if request.user.is_authenticated:
+        attempt = UserAttempt.objects.create(
+            user=request.user,
+            test=practice_test,
+            attempt_number=UserAttempt.objects.filter(user=request.user, test=practice_test).count() + 1,
+            score=final_percentage
+        )
+        for r in temp_results:
             UserResponse.objects.create(
                 user=request.user,
                 test=practice_test,
-                question_type=getattr(q, 'question_type', 'unknown'),
-                question_id=q.id,
-                question_text=q.prompt,
-                user_answer=user_answer,
-                is_correct=is_correct,
                 attempt=attempt,
-                # Safe way to get correct answer regardless of model
-                correct_answer=getattr(q, "correct_answer", getattr(q, "sample_answer", "")),
+                question_id=0, # generic ID
+                **r
             )
+        return redirect('practice-results', practice_test_id=practice_test.id)
 
-    if request.user.is_authenticated and attempt:
-        attempt.score = score
-        attempt.save()
+    # CASE B: Guest - Render results page immediately with temp data
+    return render(request, "main_app/practice/results.html", {
+        "practice_test": practice_test,
+        "responses": temp_results,
+        "score_percent": final_percentage,
+        "is_guest": True,
+    })
 
-    return redirect('practice-results', practice_test_id=practice_test_id)
 
 
-
-@login_required
+# Remove @login_required if you want guests to see scores
 def practice_results(request, practice_test_id):
     practice_test = get_object_or_404(PracticeTest, id=practice_test_id)
-    responses = UserResponse.objects.filter(test=practice_test, user=request.user)
+    
+    # If not logged in, we can't show 'UserResponse' objects 
+    # because they require a User ID in your model.
+    if not request.user.is_authenticated:
+        return render(request, "main_app/practice/results.html", {
+            "practice_test": practice_test,
+            "guest_mode": True,
+            "message": "Results are not saved for guests."
+        })
 
-   
-    score = responses.filter(is_correct=True).count()
-    total = responses.filter(question_type='mcq').count()
-    percentage = round((score / total * 100), 1) if total else 0
-
-    latest_attempt= (
+    # Standard logic for logged-in users
+    latest_attempt = (
         UserAttempt.objects.filter(user=request.user, test=practice_test)
         .order_by('-started_at')
         .first()
     )
+    
     responses = UserResponse.objects.filter(attempt=latest_attempt)
-
+    score = responses.filter(is_correct=True).count()
+    total = responses.filter(question_type='mcq').count()
+    percentage = round((score / total * 100), 1) if total else 0
 
     return render(request, "main_app/practice/results.html", {
         "practice_test": practice_test,
@@ -408,9 +412,8 @@ def practice_results(request, practice_test_id):
         "score": score,
         "total": total,
         "percentage": percentage,
-        "latest_attempt":latest_attempt,
+        "latest_attempt": latest_attempt,
     })
-
 
 def next_question(request, test_id, q_num):
     #fetch practice test 

@@ -7,195 +7,103 @@
 {% endblock %}
 
 {% block content %}
-<main class="mt-15 px-10 justify-center py-15 text-mono">
-  <div class="max-w-6xl mx-auto bg-white/80 rounded-xl shadow-lg p-8 flex flex-col gap-10">
+<main class="mt-6 md:mt-15 px-4 md:px-10 mb-20">
+  <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-100">
 
-    <header class="text-center">
+    <header class="text-center p-8 bg-slate-50 border-b border-gray-100">
       {% if test %}
-        <h1 class="text-3xl font-bold mb-2">Edit Practice Test: {{ test.title }}</h1>
+        <h1 class="text-2xl md:text-3xl font-black text-gray-800 mb-2">Edit Test: {{ test.title }}</h1>
       {% else %}
-        <h1 class="text-3xl font-bold mb-2">Create Your MTEL ELL Practice Test</h1>
+        <h1 class="text-2xl md:text-3xl font-black text-gray-800 mb-2">Create Practice Test</h1>
       {% endif %}
-      <img src="{% static 'images/full_moon.png' %}" alt="A full moon" class="w-20 mx-auto mt-3" />
+      <img src="{% static 'images/full_moon.png' %}" alt="Full moon" class="w-12 md:w-16 mx-auto mt-2 opacity-80" />
     </header>
 
-    <div class="flex flex-col justify-between gap-4">
+    <div class="p-4 md:p-8">
+      <form method="POST" class="space-y-10">
+        {% csrf_token %}
 
-      <!-- SINGLE MASTER FORM -->
-      <section class="w-full bg-gray-50 rounded-lg shadow p-6">
-        <h2 class="text-xl font-semibold mb-4 text-gray-800">
-          Write Your Own Questions or Select Questions for Your Test
-        </h2>
-
-        <form method="POST" class="space-y-6">
-          {% csrf_token %}
-
-          <!-- Test Title -->
-          <div>
-            <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-1">
+        <section class="space-y-4">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="bg-blue-600 w-2 h-6 rounded-full"></span>
+            <h2 class="text-xl font-bold text-gray-800">General Information</h2>
+          </div>
+          <div class="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+            <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-bold mb-2">
               Test Title
             </label>
-            {{ form.title|add_class:"w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" }}
+            {{ form.title|add_class:"w-full border-gray-300 rounded-xl shadow-sm focus:ring-blue-500 focus:border-blue-500 p-3" }}
+          </div>
+        </section>
+
+        <section class="space-y-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="bg-green-600 w-2 h-6 rounded-full"></span>
+            <h2 class="text-xl font-bold text-gray-800">Question Library</h2>
           </div>
 
-          <!-- Short Answer Questions -->
-          {% if form.short_questions %}
-            <div>
-              <h3 class="text-lg font-semibold text-gray-700 mb-2">Short Answer Questions</h3>
-              <div class="bg-white rounded-md shadow-sm p-3 space-y-2 border border-gray-200 max-h-48 overflow-y-auto">
-                {{ form.short_questions }}
-              </div>
-            </div>
-          {% endif %}
-
-          <!-- Long Answer Questions -->
-          {% if form.long_questions %}
-            <div>
-              <h3 class="text-lg font-semibold text-gray-700 mb-2">Long Answer Questions</h3>
-              <div class="bg-white rounded-md shadow-sm p-3 space-y-2 border border-gray-200 max-h-48 overflow-y-auto">
-                {{ form.long_questions|add_class:"w-full h-64 text-sm leading-snug" }}
-              </div>
-            </div>
-          {% endif %}
-
-          <!-- Multiple Choice Questions -->
           {% if form.mcq_questions %}
-            <div class="mb-6">
-              <div class="flex justify-between items-center mb-2">
-                <h3 class="text-lg font-semibold text-gray-700">Multiple Choice Questions</h3>
-                <button id="toggleMcqButton" type="button"
-                        class="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-md hover:bg-blue-200 transition">
-                  Hide
-                </button>
-              </div>
+            <div class="border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+              <button id="toggleMcqButton" type="button" class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition font-bold text-gray-700">
+                Multiple Choice Questions (Select to Add)
+                <span class="text-blue-600 text-sm">Hide/Show</span>
+              </button>
 
-              <div id="mcqSection" class="bg-white rounded-md shadow-sm p-3 space-y-2 border border-gray-200 max-h-96 overflow-y-auto">
+              <div id="mcqSection" class="p-4 space-y-3 max-h-80 overflow-y-auto bg-white">
                 {% for q in form.fields.mcq_questions.queryset %}
-                  <label class="block border rounded-md bg-white p-4 shadow-sm mb-2 hover:bg-gray-50 transition">
-                    <input type="checkbox" name="mcq_questions" value="{{ q.id }}" class="mr-2 accent-blue-600">
-                    <strong class="text-gray-800">{{ q.prompt }}</strong>
-                    <ul class="ml-6 list-disc text-sm text-gray-700 mt-2">
-                      <li>A. {{ q.option_a }}</li>
-                      <li>B. {{ q.option_b }}</li>
-                      <li>C. {{ q.option_c }}</li>
-                      <li>D. {{ q.option_d }}</li>
-                    </ul>
+                  <label class="flex gap-4 border rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                    <input type="checkbox" name="mcq_questions" value="{{ q.id }}" class="mt-1 w-5 h-5 accent-blue-600 flex-shrink-0">
+                    <div>
+                      <strong class="text-gray-800 block mb-1">{{ q.prompt }}</strong>
+                      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 text-xs text-gray-500 italic">
+                        <span>A: {{ q.option_a }}</span>
+                        <span>B: {{ q.option_b }}</span>
+                      </div>
+                    </div>
                   </label>
-                {% empty %}
-                  <p class="italic text-gray-500">No multiple-choice questions available yet.</p>
                 {% endfor %}
               </div>
             </div>
           {% endif %}
+          
+          </section>
 
-          <!--  Inline Add Question Inputs -->
-          <hr class="my-6 border-gray-300">
+        <section class="space-y-6 pt-10 border-t border-gray-100">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="bg-purple-600 w-2 h-6 rounded-full"></span>
+            <h2 class="text-xl font-bold text-gray-800">Add New Questions</h2>
+          </div>
 
-          <!-- Add Multiple Choice -->
-          <div class="bg-gray-50 rounded-lg shadow p-6 mb-8">
-            <button id="addMcqButton" type="button"
-                    class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mb-4">
-              ➕ Add a multiple-choice question
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button id="addMcqButton" type="button" class="flex items-center justify-center gap-2 bg-blue-50 text-blue-700 font-bold py-4 px-4 rounded-2xl border-2 border-dashed border-blue-200 hover:bg-blue-100 transition">
+              <span>➕</span> MCQ
             </button>
-            <div id="mcqContainer" class="space-y-4 hidden">
-              <div class="mcqForm mcqFormTemplate hidden">
+            <button id="addShortButton" type="button" class="flex items-center justify-center gap-2 bg-purple-50 text-purple-700 font-bold py-4 px-4 rounded-2xl border-2 border-dashed border-purple-200 hover:bg-purple-100 transition">
+              <span>➕</span> Short
+            </button>
+            <button id="addLongButton" type="button" class="flex items-center justify-center gap-2 bg-indigo-50 text-indigo-700 font-bold py-4 px-4 rounded-2xl border-2 border-dashed border-indigo-200 hover:bg-indigo-100 transition">
+              <span>➕</span> Long
+            </button>
+          </div>
+
+          <div id="mcqContainer" class="space-y-4">
+             <div class="mcqForm mcqFormTemplate hidden bg-white border-2 border-blue-100 p-6 rounded-2xl relative shadow-sm">
+                <p class="text-blue-600 font-bold mb-4 uppercase text-xs tracking-widest">New Multiple Choice</p>
                 {{ mcq_form.as_p }}
-                <button type="button"
-                        class="border border-red-700 text-red-600 rounded px-4 py-3 mcqDeleteButton">
-                  🗑️ Delete
-                </button>
-              </div>
-            </div>
+                <button type="button" class="mt-4 text-red-500 font-bold text-sm mcqDeleteButton hover:underline">🗑 Remove</button>
+             </div>
           </div>
+          </section>
 
-          <!-- Add Short Answer -->
-          <div class="bg-gray-50 rounded-lg shadow p-6 mb-8">
-            <button id="addShortButton" type="button"
-                    class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mb-4">
-              ➕ Add a short answer question
-            </button>
-            <div id="shortContainer" class="space-y-4 hidden">
-              <div class="shortForm shortFormTemplate hidden">
-                {{ short_form.as_p }}
-                <button type="button"
-                        class="border border-red-700 text-red-600 rounded px-4 py-3 shortDeleteButton">
-                  🗑️ Delete
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Add Long Answer -->
-          <div class="bg-gray-50 rounded-lg shadow p-6 mb-8">
-            <button id="addLongButton" type="button"
-                    class="bg-blue-600 text-white font-semibold py-2 px-4 rounded-md mb-4">
-              ➕ Add a long answer question
-            </button>
-            <div id="longContainer" class="space-y-4 hidden">
-              <div class="longForm longFormTemplate hidden">
-                {{ long_form.as_p }}
-                <button type="button"
-                        class="border border-red-700 text-red-600 rounded px-4 py-3 longDeleteButton">
-                  🗑️ Delete
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Save Button -->
-          <button type="submit"
-                  class="w-full bg-blue-600 text-white font-semibold py-3 rounded-md shadow-md">
-            Save Practice Test
+        <div class="pt-10">
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-5 rounded-2xl shadow-xl transform transition active:scale-95 text-xl">
+            SAVE PRACTICE TEST
           </button>
-        </form>
-      </section>
+        </div>
+
+      </form>
     </div>
   </div>
 </main>
-
-<!--  JS -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Toggle MCQ visibility
-  const toggleBtn = document.getElementById('toggleMcqButton');
-  const mcqSection = document.getElementById('mcqSection');
-  if (toggleBtn && mcqSection) {
-    toggleBtn.addEventListener('click', () => {
-      mcqSection.style.display =
-        mcqSection.style.display === 'none' ? 'block' : 'none';
-      toggleBtn.textContent =
-        mcqSection.style.display === 'none' ? 'Show' : 'Hide';
-    });
-  }
-
-  // Utility for cloning new question blocks
-  function setupAddButton(btnId, containerId, formClass, deleteClass) {
-    const addBtn = document.getElementById(btnId);
-    const container = document.getElementById(containerId);
-    const template = container.querySelector(`.${formClass}Template`);
-
-    if (!addBtn || !container || !template) return;
-
-    addBtn.addEventListener('click', () => {
-      container.style.display = 'block';
-      const newForm = template.cloneNode(true);
-      newForm.classList.remove(`${formClass}Template`, 'hidden');
-      newForm.querySelectorAll('input, textarea, select').forEach(el => el.value = '');
-      container.appendChild(newForm);
-    });
-
-    container.addEventListener('click', e => {
-      if (e.target.classList.contains(deleteClass)) {
-        e.preventDefault();
-        e.target.closest(`.${formClass}`).remove();
-      }
-    });
-  }
-
-  setupAddButton('addMcqButton', 'mcqContainer', 'mcqForm', 'mcqDeleteButton');
-  setupAddButton('addShortButton', 'shortContainer', 'shortForm', 'shortDeleteButton');
-  setupAddButton('addLongButton', 'longContainer', 'longForm', 'longDeleteButton');
-});
-</script>
 
 {% endblock %}

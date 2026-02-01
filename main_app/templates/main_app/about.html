@@ -2,9 +2,53 @@
 {% load static %}
 
 {% block content %}
-<section class="about font-mono text-lg font-semibold justify-center mt-15 py-15 text-white">
-  <h1>About</h1>
-  <p>This app lets you practice for the MTEL ESL — built with Django!</p>
-  <img src="{% static 'images/mtel.png' %}" alt="MTEL ESL logo" height="250px"/>
-</section>
+<main class="px-6 md:px-10 mt-10 md:mt-20">
+  <div class="max-w-4xl mx-auto bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 md:p-12 text-white shadow-2xl">
+    
+    <div class="flex flex-col md:flex-row items-center gap-10">
+      
+      <div class="flex-1 text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-black mb-6 tracking-tight">
+          About <span class="text-yellow-400">MTEL Prep</span>
+        </h1>
+        <p class="text-lg md:text-xl leading-relaxed text-purple-100 mb-6">
+          This platform was built to help educators master the <strong>MTEL ESL (54)</strong> exam. 
+          By simulating the actual test environment, we help you build the confidence and speed 
+          needed to succeed on test day.
+        </p>
+        <div class="inline-block bg-white/5 border border-white/10 px-4 py-2 rounded-lg font-mono text-sm text-purple-300">
+          Built with Django & Tailwind CSS
+        </div>
+      </div>
+
+      <div class="flex-shrink-0">
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-yellow-400 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+          
+          <img src="{% static 'images/mtel.png' %}" 
+               alt="MTEL ESL logo" 
+               class="relative rounded-2xl shadow-2xl w-48 h-48 md:w-64 md:h-64 object-cover transform transition hover:rotate-2"
+          />
+        </div>
+      </div>
+
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/10">
+        <div class="text-center">
+            <div class="text-yellow-400 text-2xl mb-2">✔</div>
+            <p class="text-sm font-bold uppercase tracking-widest">Real Simulation</p>
+        </div>
+        <div class="text-center">
+            <div class="text-yellow-400 text-2xl mb-2">✔</div>
+            <p class="text-sm font-bold uppercase tracking-widest">Instant Feedback</p>
+        </div>
+        <div class="text-center">
+            <div class="text-yellow-400 text-2xl mb-2">✔</div>
+            <p class="text-sm font-bold uppercase tracking-widest">Track Progress</p>
+        </div>
+    </div>
+
+  </div>
+</main>
 {% endblock %}

@@ -3,27 +3,54 @@
 {% block title %}Home | MTEL ESL Prep{% endblock %}
 
 {% block content %}
+<div class="max-w-4xl mx-auto text-center py-10 md:py-16 px-4">
+    
+    <div class="mb-12 md:mb-16 animate-fade-in">
+        <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tight leading-tight">
+            Ready to pass <br class="hidden md:block"> the MTEL?
+        </h1>
+        <p class="text-lg md:text-xl text-purple-100 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Test your knowledge with our full-length simulation. <br class="hidden md:inline">
+            Real questions, real timing, real results.
+        </p>
+        
+        <a href="{% url 'practice-test-index' %}" 
+           class="inline-block bg-yellow-400 hover:bg-yellow-300 text-purple-900 text-xl md:text-2xl font-black px-8 md:px-12 py-5 md:py-6 rounded-2xl shadow-2xl transform transition hover:scale-105 active:scale-95 border-b-4 border-yellow-600 w-full md:w-auto">
+            TAKE A FREE TEST ➔
+        </a>
+    </div>
 
-<ul class="justify-center mt-15 py-15">
-  <li class="px-4 py-2 font-sans text-lg text-white">
-    <a href="{% url 'mcq-index' %}" class="inline-block border border-white rounded text-white px-4 py-2 font-sans text-lg hover:text-purple-700 hover:bg-white transition">👉Multiple Choice Questions</a>
-  </li>
-  <li class="px-4 py-2 font-sans text-lg text-white">
-    <a href="{% url 'long-index' %}" class="inline-block border border-white rounded text-white px-4 py-4 hover:text-purple-700 hover:bg-white transition">👉Long Answer Questions</a>
-  </li>
-  <li class="px-4 py-2 font-sans text-lg text-white">
-    <a href="{% url 'short-index' %}" class="inline-block border border-white rounded text-white px-4 py-2 hover:text-purple-700 hover:bg-white transition">👉Short Answer Questions</a>
-  </li>
-</ul>
+    <hr class="border-white/20 mb-12 md:mb-16">
 
-{% if user.is_authenticated %}
-  <p class="font-sans text-2xl text-white">Welcome back, {{ user.username }}!</p>
-{% else %}
-  <a class="px-2 py-1 bg-blue-600/80 hover:bg-blue-600 text-white rounded font-sans text-white" href="{% url 'login' %}" class="btn">Login</a>
-  <a class="px-2 py-1 bg-green-500/80 hover:bg-green-500 text-black rounded font-sans text-white" href="{% url 'signup' %}" class="btn">Sign Up</a>
-  <a class="px-2 py-1 bg-gray-600/80 hover:bg-gray-600 bg-blue-600 rounded font-sans text-white" href="{% url 'practice-test-index' %}" class="btn">Browse Practice Tests</a>
-{% endif %}
+    <div class="mb-12">
+        <h2 class="text-xl md:text-2xl font-bold text-white mb-8">Practice by Category</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <a href="{% url 'mcq-index' %}" class="flex items-center justify-center bg-white/10 border border-white/20 rounded-xl text-white px-6 py-4 hover:bg-white hover:text-purple-700 transition font-bold group">
+                Multiple Choice <span class="ml-2 group-hover:translate-x-1 transition-transform text-yellow-400">»</span>
+            </a>
+            <a href="{% url 'long-index' %}" class="flex items-center justify-center bg-white/10 border border-white/20 rounded-xl text-white px-6 py-4 hover:bg-white hover:text-purple-700 transition font-bold group">
+                Long Answer <span class="ml-2 group-hover:translate-x-1 transition-transform text-yellow-400">»</span>
+            </a>
+            <a href="{% url 'short-index' %}" class="flex items-center justify-center bg-white/10 border border-white/20 rounded-xl text-white px-6 py-4 hover:bg-white hover:text-purple-700 transition font-bold group">
+                Short Answer <span class="ml-2 group-hover:translate-x-1 transition-transform text-yellow-400">»</span>
+            </a>
+        </div>
+    </div>
 
-
+    <div class="mt-16 md:mt-20 py-8 border-t border-white/10">
+        {% if user.is_authenticated %}
+            <div class="bg-white/5 inline-block px-6 py-3 rounded-full border border-white/10">
+                <p class="text-base md:text-lg text-purple-200">Welcome back, <span class="text-white font-bold">{{ user.username }}</span></p>
+            </div>
+        {% else %}
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <a href="{% url 'login' %}" class="text-white hover:text-yellow-300 font-semibold transition py-2">Login</a>
+                <span class="hidden sm:block text-white/20 text-2xl">|</span>
+                <a href="{% url 'signup' %}" class="bg-green-500 hover:bg-green-400 text-white px-8 py-3 rounded-xl font-bold transition shadow-lg w-full sm:w-auto text-center">
+                    Create Free Account
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}
-

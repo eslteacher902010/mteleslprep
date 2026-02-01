@@ -2,60 +2,89 @@
 {% load static %}
 
 {% block content %}
-<main class="px-10">
-  <div class="max-w-4xl mx-auto bg-white/90 rounded-xl shadow-lg p-8 text-white mt-15 py-15 justify-center">
-    <h1 class="text-3xl font-bold text-center mb-6">
-      Results for: {{ practice_test.title }}
-    </h1>
-    <p>Attempt: {{ latest_attempt.started_at}}</p>
-  
+<main class="px-4 md:px-10 mt-6 md:mt-15 mb-10">
+  <div class="max-w-4xl mx-auto bg-white shadow-xl rounded-2xl p-6 md:p-12 border border-gray-100">
+    
+    {% if is_guest %}
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-xl text-blue-800 shadow-sm">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+        <p class="text-sm">
+          <strong>Guest Mode:</strong> Results aren't saved. <a href="{% url 'signup' %}" class="underline font-bold hover:text-blue-900">Sign up</a> to track scores!
+        </p>
+      </div>
+    </div>
+    {% endif %}
 
-    <div class="text-center mb-8">
-      <p class="text-xl font-semibold">
-        Final Score: <span class="text-blue-700">{{ latest_attempt.score|floatformat:1 }}%</span>
-      </p>
+    <h1 class="text-2xl md:text-4xl font-extrabold text-center mb-2 text-gray-900">
+      {{ practice_test.title }}
+    </h1>
+
+    <p class="text-gray-500 text-center text-sm md:text-base mb-8">
+      {% if is_guest %}
+        Completed: {% now "F j, Y, g:i a" %}
+      {% else %}
+        Attempt: {{ latest_attempt.started_at|date:"F j, Y, g:i a" }}
+      {% endif %}
+    </p>
+  
+    <div class="bg-gray-50 rounded-2xl p-6 md:p-10 text-center mb-10 border border-gray-100">
+      <p class="text-gray-600 uppercase tracking-widest text-xs font-bold mb-2">Final Score</p>
+      <div class="text-4xl md:text-6xl font-black text-blue-600">
+        {% if is_guest %}
+          {{ score_percent|floatformat:1 }}%
+        {% else %}
+          {{ latest_attempt.score|floatformat:1 }}%
+        {% endif %}
+      </div>
     </div>
 
     <section>
-      <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Responses</h2>
-      <ul class="space-y-4">
+      <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 flex items-center">
+        <span class="bg-blue-600 w-2 h-6 rounded-full mr-3"></span>
+        Your Responses
+      </h2>
+      <ul class="space-y-6">
         {% for r in responses %}
-          <li class="border border-gray-300 rounded-md bg-white p-4">
-            <p class="font-semibold">
-              {{ r.question_type|title }} Question
-            </p>
-            <p class="text-gray-700 mt-1">
-              <strong>Your Answer:</strong> {{ r.user_answer|default:"(No answer provided)" }}
-            </p>
-            {% if r.question_type == "mcq" %}
-  {% if r.is_correct %}
-    <p class="text-green-600 font-semibold mt-2">Correct!</p>
-  {% else %}
-    <p class="text-red-600 font-semibold mt-2">Incorrect</p>
-    <p class="text-gray-600">The correct answer: {{ r.correct_answer|default:"(Not recorded)" }}</p>
-  {% endif %}
-{% elif r.question_type == "long" %}
-  <p class="text-yellow-600 font-semibold mt-2">Open Response</p>
-  <p class="text-gray-600">Sample answer: {{ r.sample_answer|default:"(No sample answer available)" }}</p>
-{% else %}
-  <p class="text-yellow-600 font-semibold mt-2">Open Response</p>
-{% endif %}
+          <li class="border border-gray-200 rounded-xl bg-white p-5 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex justify-between items-start mb-3">
+              <span class="px-2 py-1 rounded-md bg-gray-100 text-gray-600 text-[10px] font-bold uppercase">{{ r.question_type }}</span>
+              {% if r.question_type == "mcq" %}
+                {% if r.is_correct %}
+                  <span class="text-green-600 text-sm font-bold flex items-center">✓ Correct</span>
+                {% else %}
+                  <span class="text-red-600 text-sm font-bold flex items-center">✕ Incorrect</span>
+                {% endif %}
+              {% endif %}
+            </div>
 
+            <p class="text-gray-900 font-medium mb-4 leading-relaxed">{{ r.question_text }}</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div class="p-3 bg-gray-50 rounded-lg">
+                <p class="text-gray-500 font-bold text-[10px] uppercase mb-1">Your Answer</p>
+                <p class="text-gray-800">{{ r.user_answer|default:"(No answer)" }}</p>
+              </div>
+              <div class="p-3 bg-blue-50 rounded-lg">
+                <p class="text-blue-500 font-bold text-[10px] uppercase mb-1">Correct Answer / Sample</p>
+                <p class="text-blue-900 font-semibold">{{ r.correct_answer }}</p>
+              </div>
+            </div>
           </li>
         {% empty %}
-          <p class="italic text-gray-500">No responses recorded for this test.</p>
+          <li class="text-center py-10 text-gray-400 italic">No responses recorded.</li>
         {% endfor %}
       </ul>
     </section>
 
-  <div class="btn-row font-mono text-lg font-semibold text-white">
-      <a href="{% url 'practice-test-index' %}" 
-         class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
-        Back to Tests
-      </a>
+    <div class="mt-12 flex flex-col md:flex-row gap-4">
       <a href="{% url 'practice-take' practice_test.id %}"
-         class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+         class="order-1 md:order-2 flex-1 text-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95">
         Retake Test
+      </a>
+      <a href="{% url 'practice-test-index' %}" 
+         class="order-2 md:order-1 flex-1 text-center px-6 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold transition-all">
+        Back to All Tests
       </a>
     </div>
   </div>
